@@ -13,8 +13,6 @@
   <!-- jsPDF & jsPDF-AutoTable para generación de PDF estructurado y multipágina -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-  <!-- EmailJS SDK (Opcional para envío directo silencioso) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -23,6 +21,9 @@
     }
     .signature-canvas {
       touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
       cursor: crosshair;
     }
     input[type="radio"],
@@ -999,32 +1000,14 @@
 
       <!-- 8. FIRMA DIGITAL + BOTONES GUARDAR CAMBIOS Y EXPORTAR Y ENVIAR -->
       <section id="sec-firma" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="bg-[#073673] text-white px-5 py-3 flex items-center justify-between">
-          <h2 class="text-sm font-bold uppercase tracking-wider">8. Firma Digital y Envío</h2>
-          <button type="button" onclick="toggleConfigEmailJS()" class="text-[11px] text-sky-200 hover:text-white underline">
-            Configurar API EmailJS (Opcional)
-          </button>
+        <div class="bg-[#073673] text-white px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-sm font-bold uppercase tracking-wider">8. Firma Digital y Envío Automático</h2>
+          <span class="text-[11px] bg-white/15 text-sky-100 px-2.5 py-0.5 rounded-full">
+            Envío directo a: yonatansanchez704@gmail.com
+          </span>
         </div>
 
         <div class="p-5 space-y-4">
-          <!-- Panel opcional de configuración de EmailJS -->
-          <div id="panel-emailjs" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-200 space-y-3 text-xs">
-            <p class="font-bold text-amber-900">Configuración opcional de envío automático en segundo plano (EmailJS):</p>
-            <p class="text-amber-800">
-              Si configuras tus claves gratuitas de <strong>EmailJS</strong> (con una plantilla que reciba <code>to_email</code> y el adjunto Base64 <code>pdf_attachment</code>), el PDF se enviará directamente al correo que digites sin abrir ventanas externas.
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <input type="text" id="ejs_public_key" placeholder="Public Key (ej. user_xxx)" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5" />
-              <input type="text" id="ejs_service_id" placeholder="Service ID (ej. service_xxx)" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5" />
-              <input type="text" id="ejs_template_id" placeholder="Template ID (ej. template_xxx)" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5" />
-            </div>
-            <div class="flex justify-end">
-              <button type="button" onclick="guardarConfigEmailJS()" class="bg-amber-700 hover:bg-amber-800 text-white font-semibold px-3.5 py-1.5 rounded-lg">
-                Guardar configuración
-              </button>
-            </div>
-          </div>
-
           <!-- Recuadro de firma digital -->
           <div>
             <p class="text-xs font-semibold text-slate-700 mb-2">
@@ -1053,7 +1036,7 @@
             </button>
 
             <button type="button" id="btn-exportar-enviar" onclick="procesarEnvioFormulario()"
-              class="w-full sm:w-auto sm:min-w-[250px] bg-gradient-to-r from-[#073673] to-[#0e7490] hover:from-[#052957] hover:to-[#0c637a] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base tracking-wide px-8 py-4 rounded-2xl shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2.5">
+              class="w-full sm:w-auto sm:min-w-[260px] bg-gradient-to-r from-[#073673] to-[#0e7490] hover:from-[#052957] hover:to-[#0c637a] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base tracking-wide px-8 py-4 rounded-2xl shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
               </svg>
@@ -1068,90 +1051,6 @@
 
     </form>
   </main>
-
-  <!-- VENTANA EMERGENTE DE ENVÍO POR CORREO Y ADJUNTO PDF -->
-  <div id="modal-envio-correo" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-[#073673] to-[#0a468c] text-white px-5 py-3.5 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-sky-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          <h3 class="text-sm font-bold tracking-wide">Enviar Formulario Resuelto en PDF</h3>
-        </div>
-        <button type="button" onclick="cerrarModalEnvioCorreo()" class="text-sky-200 hover:text-white text-lg font-bold leading-none px-1.5" aria-label="Cerrar ventana">&times;</button>
-      </div>
-
-      <div class="p-5 space-y-4">
-        <!-- Archivo PDF descargado en segundo plano -->
-        <div class="flex items-center justify-between gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2.5">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div class="bg-rose-600 text-white text-[10px] font-extrabold px-2 py-1 rounded-md shrink-0">PDF</div>
-            <div class="min-w-0">
-              <p id="modal_pdf_nombre" class="text-xs font-bold text-slate-800 truncate">Formulario_Especialistas_Girardot.pdf</p>
-              <p id="modal_pdf_peso" class="text-[11px] text-emerald-700 font-medium">✓ PDF descargado listo para adjuntar</p>
-            </div>
-          </div>
-          <button type="button" onclick="descargarNuevamentePDF()" class="shrink-0 text-[11px] font-semibold bg-white hover:bg-slate-50 text-sky-800 border border-slate-300 px-2.5 py-1.5 rounded-lg shadow-2xs transition">
-            Descargar otra vez
-          </button>
-        </div>
-
-        <!-- Campo editable para escribir el correo electrónico destinatario -->
-        <div>
-          <label for="modal_correo_para" class="block text-xs font-bold text-slate-700 mb-1">
-            Correo electrónico destinatario <span class="text-rose-600">*</span>
-          </label>
-          <input type="email" id="modal_correo_para" placeholder="Escriba el correo electrónico destino (ej. segl@clinicadeespecialistas.com)"
-            class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-medium text-slate-900 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
-        </div>
-
-        <!-- Asunto del correo -->
-        <div>
-          <label for="modal_correo_asunto" class="block text-xs font-bold text-slate-700 mb-1">
-            Asunto del correo
-          </label>
-          <input type="text" id="modal_correo_asunto"
-            class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs text-slate-800 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
-        </div>
-
-        <!-- Mensaje del correo -->
-        <div>
-          <label for="modal_correo_mensaje" class="block text-xs font-bold text-slate-700 mb-1">
-            Mensaje
-          </label>
-          <textarea id="modal_correo_mensaje" rows="3"
-            class="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-800 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none"></textarea>
-        </div>
-
-        <!-- Selector para adjuntar el documento PDF descargado -->
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-          <label for="modal_input_adjunto" class="block text-[11px] font-bold text-slate-700 mb-1">
-            Adjuntar documento PDF descargado:
-          </label>
-          <input type="file" id="modal_input_adjunto" accept="application/pdf" onchange="actualizarNombreAdjuntoSeleccionado(this)"
-            class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-800 hover:file:bg-sky-200 cursor-pointer" />
-          <p id="modal_adjunto_confirmado" class="hidden text-[11px] text-emerald-700 font-semibold mt-1"></p>
-        </div>
-
-        <!-- Botones de acción dentro de la ventana emergente -->
-        <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
-          <button type="button" id="btn-compartir-nativo" onclick="compartirPDFConAdjunto()"
-            class="hidden flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl shadow-sm transition items-center justify-center gap-2">
-            <span>Compartir PDF Adjunto</span>
-          </button>
-
-          <button type="button" id="btn-modal-enviar-correo" onclick="abrirGmailDesdeModal()"
-            class="flex-1 bg-gradient-to-r from-[#073673] to-[#0e7490] hover:from-[#052957] hover:to-[#0c637a] text-white font-bold text-xs sm:text-sm py-3 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-            </svg>
-            <span>ENVIAR</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- MODAL DE NOTIFICACIÓN -->
   <div id="custom-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
@@ -1168,7 +1067,12 @@
 
   <script>
     // =========================================================================
-    // 1. DATOS DE TABLAS DINÁMICAS EXTRAÍDOS DEL PDF
+    // CONFIGURACIÓN DE CORREO DESTINO ESPECÍFICO
+    // =========================================================================
+    const CORREO_DESTINO_ESPECIFICO = "yonatansanchez704@gmail.com";
+
+    // =========================================================================
+    // 1. DATOS DE TABLAS DINÁMICAS
     // =========================================================================
     const listaAlteracionesP14 = [
       { id: 'poliglobulia', label: '"Sangre gruesa" (Poliglobulia)' },
@@ -1233,9 +1137,10 @@
     ];
 
     let contadorMed13 = 0;
+    let recargarAlCerrarModal = false;
 
     // =========================================================================
-    // 2. INICIALIZACIÓN DE TABLAS Y FECHA ACTUAL
+    // 2. INICIALIZACIÓN DE TABLAS, FECHA ACTUAL Y FIRMA DIGITAL
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
       const hoy = new Date().toISOString().split('T')[0];
@@ -1313,13 +1218,6 @@
         tbodyStopBang.appendChild(tr);
       });
 
-      const savedPub = localStorage.getItem('especialistas_girardot_ejs_pub') || '';
-      const savedSrv = localStorage.getItem('especialistas_girardot_ejs_srv') || '';
-      const savedTpl = localStorage.getItem('especialistas_girardot_ejs_tpl') || '';
-      document.getElementById('ejs_public_key').value = savedPub;
-      document.getElementById('ejs_service_id').value = savedSrv;
-      document.getElementById('ejs_template_id').value = savedTpl;
-
       inicializarFirmaDigital();
       restaurarCambiosGuardados();
     });
@@ -1338,7 +1236,7 @@
     }
 
     // =========================================================================
-    // 3. CÁLCULOS AUTOMÁTICOS (EDAD, IMC, EPWORTH, STOP-BANG) Y CONTROLES UI
+    // 3. CÁLCULOS AUTOMÁTICOS (EDAD, IMC, EPWORTH, STOP-BANG) Y MODAL
     // =========================================================================
     function toggleBloque(id, mostrar) {
       const el = document.getElementById(id);
@@ -1414,7 +1312,8 @@
       return { total, clasif };
     }
 
-    function mostrarAviso(titulo, mensaje) {
+    function mostrarAviso(titulo, mensaje, recargarDespues = false) {
+      recargarAlCerrarModal = recargarDespues;
       document.getElementById('modal-title').textContent = titulo;
       document.getElementById('modal-message').innerHTML = mensaje;
       const modal = document.getElementById('custom-modal');
@@ -1426,22 +1325,15 @@
       const modal = document.getElementById('custom-modal');
       modal.classList.add('hidden');
       modal.classList.remove('flex');
-    }
-
-    function toggleConfigEmailJS() {
-      const panel = document.getElementById('panel-emailjs');
-      panel.classList.toggle('hidden');
-    }
-
-    function guardarConfigEmailJS() {
-      localStorage.setItem('especialistas_girardot_ejs_pub', document.getElementById('ejs_public_key').value.trim());
-      localStorage.setItem('especialistas_girardot_ejs_srv', document.getElementById('ejs_service_id').value.trim());
-      localStorage.setItem('especialistas_girardot_ejs_tpl', document.getElementById('ejs_template_id').value.trim());
-      mostrarAviso('Configuración guardada', 'Las credenciales de EmailJS se han guardado localmente en este navegador.');
+      if (recargarAlCerrarModal) {
+        recargarAlCerrarModal = false;
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        window.location.reload();
+      }
     }
 
     // =========================================================================
-    // 4. FIRMA DIGITAL EN CANVAS (RATÓN Y PANTALLA TÁCTIL)
+    // 4. FIRMA DIGITAL EN CANVAS (COMPATIBLE CON IPHONE / SAFARI, TOUCH Y RATÓN)
     // =========================================================================
     let canvas, ctx;
     let isDrawing = false;
@@ -1449,18 +1341,22 @@
 
     function inicializarFirmaDigital() {
       canvas = document.getElementById('signature-pad');
+      if (!canvas) return;
       ctx = canvas.getContext('2d');
 
       function resizeCanvas() {
         const rect = canvas.getBoundingClientRect();
+        const width = rect.width || canvas.offsetWidth || 600;
+        const height = rect.height || canvas.offsetHeight || 176;
         const dpr = window.devicePixelRatio || 1;
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(dpr, dpr);
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2.4;
+        ctx.lineWidth = 2.6;
       }
 
       resizeCanvas();
@@ -1470,10 +1366,11 @@
 
       function getCoords(e) {
         const rect = canvas.getBoundingClientRect();
-        if (e.touches && e.touches.length > 0) {
+        const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+        if (touch) {
           return {
-            x: e.touches[0].clientX - rect.left,
-            y: e.touches[0].clientY - rect.top
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
           };
         }
         return {
@@ -1483,40 +1380,53 @@
       }
 
       function startDraw(e) {
+        if (e.cancelable) e.preventDefault();
         isDrawing = true;
         hasSigned = true;
-        document.getElementById('signature-placeholder').classList.add('hidden');
+        const placeholder = document.getElementById('signature-placeholder');
+        if (placeholder) placeholder.classList.add('hidden');
         const pos = getCoords(e);
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
+        ctx.lineTo(pos.x + 0.1, pos.y + 0.1);
+        ctx.stroke();
       }
 
       function moveDraw(e) {
         if (!isDrawing) return;
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         const pos = getCoords(e);
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
       }
 
-      function endDraw() {
+      function endDraw(e) {
+        if (!isDrawing) return;
+        if (e && e.cancelable) e.preventDefault();
         isDrawing = false;
       }
 
+      // Eventos táctiles directos para Safari iOS / iPhone
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', moveDraw, { passive: false });
+      canvas.addEventListener('touchend', endDraw, { passive: false });
+      canvas.addEventListener('touchcancel', endDraw, { passive: false });
+
+      // Eventos de ratón para escritorio
       canvas.addEventListener('mousedown', startDraw);
       canvas.addEventListener('mousemove', moveDraw);
       window.addEventListener('mouseup', endDraw);
-
-      canvas.addEventListener('touchstart', startDraw, { passive: false });
-      canvas.addEventListener('touchmove', moveDraw, { passive: false });
-      canvas.addEventListener('touchend', endDraw);
     }
 
     function limpiarFirma() {
-      const rect = canvas.getBoundingClientRect();
-      ctx.clearRect(0, 0, rect.width, rect.height);
+      if (!canvas || !ctx) return;
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
       hasSigned = false;
-      document.getElementById('signature-placeholder').classList.remove('hidden');
+      const placeholder = document.getElementById('signature-placeholder');
+      if (placeholder) placeholder.classList.remove('hidden');
     }
 
     // =========================================================================
@@ -1887,7 +1797,7 @@
     }
 
     // =========================================================================
-    // 7. GUARDAR CAMBIOS EN LOCALSTORAGE + EXPORTAR Y ENVIAR PDF
+    // 7. GUARDAR CAMBIOS EN LOCALSTORAGE
     // =========================================================================
     const STORAGE_KEY_FORM = 'especialistas_girardot_formulario_guardado_v1';
 
@@ -2002,119 +1912,9 @@
       }
     }
 
-    function actualizarNombreAdjuntoSeleccionado(input) {
-      const infoEl = document.getElementById('modal_adjunto_confirmado');
-      if (!infoEl) return;
-      if (input.files && input.files[0]) {
-        infoEl.textContent = `✓ Archivo seleccionado para adjuntar: ${input.files[0].name}`;
-        infoEl.classList.remove('hidden');
-      } else {
-        infoEl.classList.add('hidden');
-      }
-    }
-
-    let ultimoDocPDF = null;
-    let ultimoBlobPDF = null;
-    let ultimoNombreArchivoPDF = 'Formulario_Especialistas_Girardot.pdf';
-
-    function cerrarModalEnvioCorreo() {
-      const modal = document.getElementById('modal-envio-correo');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function descargarNuevamentePDF() {
-      if (ultimoDocPDF) {
-        ultimoDocPDF.save(ultimoNombreArchivoPDF);
-      }
-    }
-
-    async function compartirPDFConAdjunto() {
-      if (!ultimoBlobPDF) return;
-      const correoDestino = getVal('modal_correo_para');
-      const asunto = getVal('modal_correo_asunto');
-      const mensaje = getVal('modal_correo_mensaje');
-
-      const archivoInput = document.getElementById('modal_input_adjunto')?.files?.[0];
-      const fileToShare = archivoInput || new File([ultimoBlobPDF], ultimoNombreArchivoPDF, { type: 'application/pdf' });
-
-      if (navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
-        try {
-          await navigator.share({
-            title: asunto,
-            text: correoDestino ? `Para: ${correoDestino}\n\n${mensaje}` : mensaje,
-            files: [fileToShare]
-          });
-        } catch (e) {
-          // Usuario canceló el diálogo de compartir
-        }
-      }
-    }
-
-    function leerArchivoComoDataURL(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function abrirGmailDesdeModal() {
-      const correoDestino = getVal('modal_correo_para');
-      if (!correoDestino || !correoDestino.includes('@')) {
-        mostrarAviso('Correo electrónico requerido', 'Por favor digite un <strong>correo electrónico destinatario</strong> válido antes de enviar.');
-        document.getElementById('modal_correo_para').focus();
-        return;
-      }
-
-      const asuntoTexto = getVal('modal_correo_asunto');
-      const mensajeTexto = getVal('modal_correo_mensaje');
-      const archivoAdjuntoInput = document.getElementById('modal_input_adjunto')?.files?.[0];
-
-      const pubKey = localStorage.getItem('especialistas_girardot_ejs_pub');
-      const srvId = localStorage.getItem('especialistas_girardot_ejs_srv');
-      const tplId = localStorage.getItem('especialistas_girardot_ejs_tpl');
-
-      if (pubKey && srvId && tplId && window.emailjs && (archivoAdjuntoInput || ultimoDocPDF)) {
-        const btnEnviarModal = document.getElementById('btn-modal-enviar-correo');
-        const textoOrigModal = btnEnviarModal.innerHTML;
-        btnEnviarModal.disabled = true;
-        btnEnviarModal.innerHTML = '<span>Enviando correo...</span>';
-        try {
-          const pdfBase64 = archivoAdjuntoInput
-            ? await leerArchivoComoDataURL(archivoAdjuntoInput)
-            : ultimoDocPDF.output('datauristring');
-          emailjs.init(pubKey);
-          await emailjs.send(srvId, tplId, {
-            to_email: correoDestino,
-            subject: asuntoTexto,
-            message: mensajeTexto,
-            paciente_nombre: `${getVal('pac_nombres')} ${getVal('pac_apellidos')}`.trim(),
-            paciente_cc: getVal('pac_cc') || 'SinDoc',
-            fecha_examen: getVal('pac_fecha_examen'),
-            epworth_total: `${calcularEpworth()} / 24`,
-            pdf_attachment: pdfBase64
-          });
-          cerrarModalEnvioCorreo();
-          mostrarAviso(
-            '¡Correo enviado con éxito!',
-            `El formulario resuelto en PDF (<strong>${archivoAdjuntoInput ? archivoAdjuntoInput.name : ultimoNombreArchivoPDF}</strong>) fue enviado a <strong>${correoDestino}</strong>.`
-          );
-          return;
-        } catch (err) {
-          // Si falla EmailJS, continúa abriendo Gmail con el destinatario digitado
-        } finally {
-          btnEnviarModal.disabled = false;
-          btnEnviarModal.innerHTML = textoOrigModal;
-        }
-      }
-
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(correoDestino)}&su=${encodeURIComponent(asuntoTexto)}&body=${encodeURIComponent(mensajeTexto)}`;
-      window.open(gmailUrl, '_blank');
-      cerrarModalEnvioCorreo();
-    }
-
+    // =========================================================================
+    // 8. EXPORTAR PDF Y ENVIARLO AUTOMÁTICAMENTE AL CORREO ESPECÍFICO
+    // =========================================================================
     async function procesarEnvioFormulario() {
       const nombres = getVal('pac_nombres');
       const apellidos = getVal('pac_apellidos');
@@ -2152,7 +1952,7 @@
       const btn = document.getElementById('btn-exportar-enviar');
       const textoOriginal = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '<span>Exportando PDF...</span>';
+      btn.innerHTML = '<span>Exportando y enviando PDF...</span>';
 
       try {
         const logoDataUrl = await obtenerLogoDataURL();
@@ -2163,47 +1963,53 @@
         const ccPaciente = getVal('pac_cc') || 'SinDoc';
         const nombreArchivo = `Formulario_Especialistas_Girardot_${nombreCompleto.replace(/\s+/g, '_')}_${tipoDoc}_${ccPaciente}.pdf`;
 
-        ultimoDocPDF = doc;
-        ultimoNombreArchivoPDF = nombreArchivo;
-        ultimoBlobPDF = doc.output('blob');
-
-        // Descargar en segundo plano el PDF generado
+        // 1. Guardar / descargar automáticamente el PDF en el equipo
         doc.save(nombreArchivo);
 
-        // Preparar la ventana emergente funcional para digitar el correo y adjuntar el PDF
-        const inputCorreo = document.getElementById('modal_correo_para');
-        inputCorreo.value = '';
-        document.getElementById('modal_input_adjunto').value = '';
-        document.getElementById('modal_adjunto_confirmado').classList.add('hidden');
+        // 2. Construir un objeto File real para que FormSubmit adjunte el PDF
+        const pdfBlob = doc.output('blob');
+        const pdfFile = new File([pdfBlob], nombreArchivo, { type: 'application/pdf' });
+        const resStopBang = calcularStopBang();
+        const totalEpworth = calcularEpworth();
 
-        document.getElementById('modal_correo_asunto').value = `Consentimiento y Cuestionario Polisomnografía - ${nombreCompleto} (${tipoDoc} ${ccPaciente})`;
-        document.getElementById('modal_correo_mensaje').value =
-          `Cordial saludo,\n\n` +
-          `Adjunto el PDF resuelto y firmado digitalmente del Consentimiento Informado y Cuestionario de Polisomnografía (Clínica de Especialistas Girardot):\n` +
-          `• Paciente: ${nombreCompleto} (${tipoDoc} ${ccPaciente})\n` +
-          `• Fecha: ${getVal('pac_fecha_examen') || 'Hoy'} | Epworth: ${calcularEpworth()}/24 pts\n` +
-          `• Archivo: ${nombreArchivo}`;
+        const formData = new FormData();
+        formData.append("_subject", `Consentimiento y Cuestionario Polisomnografía (Especialistas Girardot) - ${nombreCompleto} (${tipoDoc} ${ccPaciente})`);
+        formData.append("_captcha", "false");
+        formData.append("_template", "table");
+        formData.append("Sede", "Clínica de Especialistas Girardot");
+        formData.append("Paciente", `${nombreCompleto} (${tipoDoc} ${ccPaciente})`);
+        formData.append("Telefono", getVal('pac_telefono') || 'No registrado');
+        formData.append("EPS_Empresa", getVal('pac_empresa') || 'No registrada');
+        formData.append("Fecha_Examen", getVal('pac_fecha_examen') || 'Hoy');
+        formData.append("Puntaje_Epworth", `${totalEpworth} / 24 puntos`);
+        formData.append("Puntaje_STOP_BANG", `${resStopBang.total} / 8 (${resStopBang.clasif})`);
+        formData.append("attachment", pdfFile, nombreArchivo);
 
-        document.getElementById('modal_pdf_nombre').textContent = nombreArchivo;
-        const pesoKB = Math.max(1, Math.round(ultimoBlobPDF.size / 1024));
-        document.getElementById('modal_pdf_peso').textContent = `✓ PDF descargado (${pesoKB} KB) listo para adjuntar`;
+        // Endpoint estándar (sin /ajax/) para procesar el archivo PDF adjunto
+        const response = await fetch(`https://formsubmit.co/${CORREO_DESTINO_ESPECIFICO}`, {
+          method: "POST",
+          body: formData
+        });
 
-        const testFile = new File([ultimoBlobPDF], nombreArchivo, { type: 'application/pdf' });
-        const btnCompartir = document.getElementById('btn-compartir-nativo');
-        if (navigator.canShare && navigator.canShare({ files: [testFile] })) {
-          btnCompartir.classList.remove('hidden');
-          btnCompartir.classList.add('flex');
+        if (response.ok) {
+          // 3. Limpiar borrador guardado en localStorage para que al recargar quede en blanco
+          localStorage.removeItem(STORAGE_KEY_FORM);
+
+          mostrarAviso(
+            '¡Exportado y enviado con éxito!',
+            `1. Se descargó el archivo <strong>${nombreArchivo}</strong> en este equipo.<br><br>` +
+            `2. El mismo documento PDF se envió adjunto al correo <strong>${CORREO_DESTINO_ESPECIFICO}</strong>.<br><br>` +
+            `<span class="text-xs text-slate-500">Al presionar <strong>Entendido</strong>, la página se actualizará y quedará limpia para registrar un nuevo paciente.</span>`,
+            true
+          );
         } else {
-          btnCompartir.classList.add('hidden');
-          btnCompartir.classList.remove('flex');
+          throw new Error(`El servidor respondió con estado ${response.status}.`);
         }
-
-        const modalEnvio = document.getElementById('modal-envio-correo');
-        modalEnvio.classList.remove('hidden');
-        modalEnvio.classList.add('flex');
-        setTimeout(() => inputCorreo.focus(), 100);
       } catch (err) {
-        mostrarAviso('Error al generar el PDF', `Ocurrió un inconveniente: ${err.message}`);
+        mostrarAviso(
+          'PDF descargado, pero hubo un error en el envío',
+          `El archivo PDF se descargó correctamente en tu equipo, pero ocurrió un inconveniente al enviarlo a <strong>${CORREO_DESTINO_ESPECIFICO}</strong>: ${err.message}`
+        );
       } finally {
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
