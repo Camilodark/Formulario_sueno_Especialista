@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuestionario Polisomnografía - Clínica de Especialistas Girardot</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- jsPDF & jsPDF-AutoTable para generación de PDF estructurado y multipágina -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <!-- EmailJS SDK (Opcional para envío directo silencioso) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+    .signature-canvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+    input[type="radio"],
+    input[type="checkbox"] {
+      accent-color: #0369a1;
+      width: 1.05rem;
+      height: 1.05rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+
+  <!-- ENCABEZADO INSTITUCIONAL COMPACTO CON LOGO CLÍNICA DE ESPECIALISTAS GIRARDOT -->
+  <header class="bg-gradient-to-r from-[#073673] via-[#0a468c] to-[#0e7490] text-white shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-5">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <!-- Logo compacto Clínica de Especialistas Girardot -->
+          <div class="bg-white rounded-xl p-1 shadow-sm shrink-0 flex items-center justify-center">
+            <svg id="logo-clinica-especialistas-svg" width="66" height="60" viewBox="0 0 320 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Clínica de Especialistas Girardot">
+              <rect x="6" y="6" width="308" height="278" rx="22" fill="#FFFFFF" stroke="#073673" stroke-width="11" />
+              <!-- Arco exterior azul oscuro (C) -->
+              <path d="M 278 46 C 210 18, 42 26, 42 96 C 42 164, 178 168, 224 166 L 243 136 C 175 138, 128 124, 128 96 C 128 68, 198 62, 260 84 Z" fill="#073673" />
+              <!-- Cuña interior turquesa -->
+              <path d="M 158 98 C 168 78, 218 76, 255 88 L 228 134 C 190 132, 160 116, 158 98 Z" fill="#17B5BC" />
+              <!-- Texto institucional -->
+              <text x="160" y="198" text-anchor="middle" font-family="'Inter', Arial, sans-serif" font-weight="800" font-size="25" fill="#000000" letter-spacing="0.5">CLINICA DE</text>
+              <text x="160" y="227" text-anchor="middle" font-family="'Inter', Arial, sans-serif" font-weight="800" font-size="25" fill="#000000" letter-spacing="0.5">ESPECIALISTAS</text>
+              <text x="160" y="256" text-anchor="middle" font-family="'Inter', Arial, sans-serif" font-weight="800" font-size="25" fill="#000000" letter-spacing="0.5">GIRARDOT</text>
+            </svg>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h1 class="text-lg sm:text-2xl font-extrabold tracking-tight">CLÍNICA DE ESPECIALISTAS GIRARDOT</h1>
+              <span class="bg-white/15 text-sky-100 text-xs font-semibold px-2.5 py-1 rounded-full border border-white/20">
+                Centro de Estudios de Sueño
+              </span>
+            </div>
+            <p class="text-sky-100 text-xs sm:text-sm mt-1">
+              Calle 13 No. 10 - 49, Barrio San Miguel, Girardot • Tel / WhatsApp Citas: (+57) 317 433 6098
+            </p>
+            <p class="text-sky-200 text-[11px] sm:text-xs mt-0.5">
+              Correo: segl@clinicadeespecialistas.com • Consulta externa: L-V 6:00 a.m. - 6:00 p.m. • Admin: L-V 7:00 a.m. - 3:00 p.m. • Urgencias 24h
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-2 text-xs text-sky-50 shrink-0">
+          <p class="font-semibold">Cuestionario Clínico de Sueño &amp; Consentimiento</p>
+          <p class="text-sky-200 mt-0.5">Polisomnografía • Diligenciamiento Digital</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
+    <form id="junical-form" class="space-y-6" onsubmit="return false;">
+
+      <!-- 1. DATOS PERSONALES DEL PACIENTE -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-sky-800 text-white px-5 py-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider">1. Datos Personales del Paciente</h2>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label for="pac_apellidos" class="block text-xs font-semibold text-slate-700 mb-1">Apellidos <span class="text-rose-600">*</span></label>
+              <input type="text" id="pac_apellidos" required placeholder="Apellidos completos" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+            </div>
+            <div>
+              <label for="pac_nombres" class="block text-xs font-semibold text-slate-700 mb-1">Nombre completo <span class="text-rose-600">*</span></label>
+              <input type="text" id="pac_nombres" required placeholder="Nombres completos" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+            </div>
+            <div>
+              <label for="pac_fecha_examen" class="block text-xs font-semibold text-slate-700 mb-1">Fecha examen</label>
+              <input type="date" id="pac_fecha_examen" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label for="pac_cc" class="block text-xs font-semibold text-slate-700 mb-1">Tipo y Número de Documento <span class="text-rose-600">*</span></label>
+              <div class="flex gap-2">
+                <select id="pac_tipo_doc" aria-label="Tipo de documento" class="w-24 shrink-0 rounded-xl border border-slate-300 bg-slate-50 px-2.5 py-2 text-sm font-semibold text-slate-800 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none">
+                  <option value="CC" selected>CC</option>
+                  <option value="TI">TI</option>
+                  <option value="CE">CE</option>
+                  <option value="RC">RC</option>
+                </select>
+                <input type="text" id="pac_cc" required placeholder="Número de identificación" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+              </div>
+            </div>
+            <div>
+              <label for="pac_telefono" class="block text-xs font-semibold text-slate-700 mb-1">Teléfono paciente</label>
+              <input type="tel" id="pac_telefono" placeholder="Celular o fijo" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+            </div>
+            <div>
+              <label for="pac_empresa" class="block text-xs font-semibold text-slate-700 mb-1">Empresa médica / EPS</label>
+              <input type="text" id="pac_empresa" placeholder="Entidad aseguradora" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="sm:col-span-2">
+              <label for="pac_medico" class="block text-xs font-semibold text-slate-700 mb-1">Md. que remite (nombre y especialidad)</label>
+              <input type="text" id="pac_medico" placeholder="Ej. Dr. Juan Pérez - Neumología / Neurología" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+            </div>
+            <div>
+              <label for="pac_nacimiento" class="block text-xs font-semibold text-slate-700 mb-1">Fecha de nacimiento</label>
+              <input type="date" id="pac_nacimiento" onchange="calcularEdadDesdeNacimiento()" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+            </div>
+          </div>
+
+          <!-- Medidas antropométricas -->
+          <div class="pt-2 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div>
+              <label for="pac_edad" class="block text-xs font-semibold text-slate-700 mb-1">Edad (años)</label>
+              <input type="number" id="pac_edad" min="0" max="120" placeholder="Ej. 45" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 outline-none" />
+            </div>
+            <div>
+              <label for="pac_talla" class="block text-xs font-semibold text-slate-700 mb-1">Talla (cm)</label>
+              <input type="number" id="pac_talla" step="0.1" min="40" max="250" oninput="calcularIMC()" placeholder="Ej. 170" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 outline-none" />
+            </div>
+            <div>
+              <label for="pac_peso" class="block text-xs font-semibold text-slate-700 mb-1">Peso (Kg)</label>
+              <input type="number" id="pac_peso" step="0.1" min="5" max="350" oninput="calcularIMC()" placeholder="Ej. 78" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 outline-none" />
+            </div>
+            <div>
+              <label for="pac_imc" class="block text-xs font-semibold text-slate-700 mb-1">IMC (Auto)</label>
+              <input type="text" id="pac_imc" readonly placeholder="--" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-sky-800 outline-none" />
+            </div>
+            <div>
+              <label for="pac_cuello" class="block text-xs font-semibold text-slate-700 mb-1">Cuello (cm)</label>
+              <input type="number" id="pac_cuello" step="0.1" placeholder="Ej. 40" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 outline-none" />
+            </div>
+            <div>
+              <label for="pac_abdomen" class="block text-xs font-semibold text-slate-700 mb-1">Perím. abdominal (cm)</label>
+              <input type="number" id="pac_abdomen" step="0.1" placeholder="Ej. 96" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 outline-none" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. CUESTIONARIO DE HÁBITOS Y SÍNTOMAS DE SUEÑO (PREGUNTAS 1 A 18) -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-sky-800 text-white px-5 py-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider">2. Cuestionario Clínico de Hábitos de Sueño</h2>
+          <p class="text-xs text-sky-100 mt-0.5">Conteste todas las preguntas de acuerdo con lo que sucede "generalmente" en su vida diaria.</p>
+        </div>
+
+        <div class="p-5 space-y-6">
+          <!-- Preguntas 1, 2 y 3 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-3">1. ¿A qué hora usted se acuesta (se mete en la cama)?</p>
+              <div class="space-y-2">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Días Laborales</label>
+                  <input type="time" id="p1_laborales" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Días de Descanso</label>
+                  <input type="time" id="p1_descanso" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm" />
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-3">2. ¿A qué hora usted se levanta (se sale de la cama)?</p>
+              <div class="space-y-2">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Días Laborales</label>
+                  <input type="time" id="p2_laborales" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Días de Descanso</label>
+                  <input type="time" id="p2_descanso" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm" />
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-3">3. ¿Del tiempo que está en la cama, cuántas horas duerme?</p>
+              <div class="space-y-2">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Días Laborales (horas)</label>
+                  <input type="number" step="0.5" min="0" max="24" id="p3_laborales" placeholder="Ej. 6.5" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Días de Descanso (horas)</label>
+                  <input type="number" step="0.5" min="0" max="24" id="p3_descanso" placeholder="Ej. 8" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 4 y Pregunta 5 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-2.5">4. ¿Cuánto tiempo le toma quedarse dormido?</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p4_latencia" value="Menos de 15 min." />
+                  <span>Menos de 15 min.</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p4_latencia" value="De 15 a 30 min." />
+                  <span>De 15 a 30 min.</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p4_latencia" value="Más de 30 min." />
+                  <span>Más de 30 min.</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p4_latencia" value="Más de 1 hora" />
+                  <span>Más de 1 hora</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-2.5">5. ¿Qué tal duerme en la noche?</p>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p5_calidad" value="Muy bien" />
+                  <span>Muy bien</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p5_calidad" value="Bien" />
+                  <span>Bien</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p5_calidad" value="Mal" />
+                  <span>Mal</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                  <input type="radio" name="p5_calidad" value="Muy mal" />
+                  <span>Muy mal</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 6 y 7 -->
+          <div class="p-4 rounded-xl border border-slate-200 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p class="text-xs font-bold text-slate-800">6. ¿Se despierta varias veces en la noche?</p>
+              <div class="flex items-center gap-4 text-xs font-semibold">
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="p6_despierta" value="SI" onchange="toggleBloque('bloque_p6', true)" />
+                  <span>SÍ</span>
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="p6_despierta" value="NO" onchange="toggleBloque('bloque_p6', false)" />
+                  <span>NO</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="bloque_p6" class="hidden pt-3 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">¿Cuántas veces se despierta en la noche?</label>
+                <input type="text" id="p6_cuantas_veces" placeholder="Ej. 3 veces" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">¿Qué lo despierta?</label>
+                <input type="text" id="p6_que_despierta" placeholder="Ej. Ganas de ir al baño, ahogo, ruido" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">¿Se levanta o permanece despierto en la cama?</label>
+                <select id="p6_levanta_o_cama" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm bg-white">
+                  <option value="">Seleccione...</option>
+                  <option value="Permanece despierto en la cama">Permanece despierto en la cama</option>
+                  <option value="Se levanta de la cama">Se levanta de la cama</option>
+                  <option value="Ambas opciones">Ambas opciones</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100">
+              <p class="text-xs font-bold text-slate-800 mb-2">7. Si se despierta, ¿cuánto tiempo le toma en volver a conciliar el sueño?</p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                  <input type="radio" name="p7_volver_dormir" value="Menos de 15 min." />
+                  <span>Menos de 15 min.</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                  <input type="radio" name="p7_volver_dormir" value="De 15 a 30 min." />
+                  <span>De 15 a 30 min.</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                  <input type="radio" name="p7_volver_dormir" value="Más de 30 min." />
+                  <span>Más de 30 min.</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                  <input type="radio" name="p7_volver_dormir" value="Más de 1 hora" />
+                  <span>Más de 1 hora</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 8 -->
+          <div class="p-4 rounded-xl border border-slate-200 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p class="text-xs font-bold text-slate-800">8. ¿Usted considera que tiene dificultades con su sueño?</p>
+              <div class="flex items-center gap-4 text-xs font-semibold">
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="p8_dificultad" value="SI" onchange="toggleBloque('bloque_p8', true)" />
+                  <span>SÍ</span>
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="p8_dificultad" value="NO" onchange="toggleBloque('bloque_p8', false)" />
+                  <span>NO</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="bloque_p8" class="hidden pt-3 border-t border-slate-100 space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">¿Por cuánto tiempo ha tenido dificultad con su sueño?</label>
+                  <div class="flex gap-2">
+                    <input type="number" id="p8_tiempo_num" min="1" placeholder="Cantidad" class="w-1/2 rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+                    <select id="p8_tiempo_unidad" class="w-1/2 rounded-xl border border-slate-300 px-3 py-1.5 text-sm bg-white">
+                      <option value="Semanas">Semanas</option>
+                      <option value="Meses">Meses</option>
+                      <option value="Años">Años</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">¿Qué tan severo considera su problema de sueño?</label>
+                  <div class="grid grid-cols-3 gap-2 text-xs">
+                    <label class="flex items-center gap-1.5 p-2 rounded-lg border border-slate-200 cursor-pointer">
+                      <input type="radio" name="p8_severidad" value="Muy severo" />
+                      <span>Muy severo</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 p-2 rounded-lg border border-slate-200 cursor-pointer">
+                      <input type="radio" name="p8_severidad" value="Moderadamente severo" />
+                      <span>Moderado</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 p-2 rounded-lg border border-slate-200 cursor-pointer">
+                      <input type="radio" name="p8_severidad" value="Poco Severo" />
+                      <span>Poco severo</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                  <span class="font-medium text-slate-700">¿Dificultad para QUEDARSE dormido?</span>
+                  <div class="flex gap-3 font-semibold">
+                    <label class="flex items-center gap-1"><input type="radio" name="p8_quedarse" value="SI" /> SÍ</label>
+                    <label class="flex items-center gap-1"><input type="radio" name="p8_quedarse" value="NO" /> NO</label>
+                  </div>
+                </div>
+                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                  <span class="font-medium text-slate-700">¿Dificultad en PERMANECER dormido?</span>
+                  <div class="flex gap-3 font-semibold">
+                    <label class="flex items-center gap-1"><input type="radio" name="p8_permanecer" value="SI" /> SÍ</label>
+                    <label class="flex items-center gap-1"><input type="radio" name="p8_permanecer" value="NO" /> NO</label>
+                  </div>
+                </div>
+                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                  <span class="font-medium text-slate-700">¿Se despierta MUY temprano?</span>
+                  <div class="flex gap-3 font-semibold">
+                    <label class="flex items-center gap-1"><input type="radio" name="p8_temprano" value="SI" /> SÍ</label>
+                    <label class="flex items-center gap-1"><input type="radio" name="p8_temprano" value="NO" /> NO</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preguntas 9, 10 y 11 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl border border-slate-200">
+              <label for="p9_problema" class="block text-xs font-bold text-slate-800 mb-2">9. ¿Cuál considera que es su problema de sueño? Explique:</label>
+              <textarea id="p9_problema" rows="3" placeholder="Describa brevemente su problema de sueño..." class="w-full rounded-xl border border-slate-300 p-3 text-sm outline-none focus:border-sky-600"></textarea>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">10. ¿Ha consultado alguna vez por su problema de sueño?</span>
+                <div class="flex gap-4 text-xs font-semibold">
+                  <label class="flex items-center gap-1"><input type="radio" name="p10_consulto" value="SI" /> SÍ</label>
+                  <label class="flex items-center gap-1"><input type="radio" name="p10_consulto" value="NO" /> NO</label>
+                </div>
+              </div>
+              <div>
+                <label for="p11_diagnosticos" class="block text-xs font-bold text-slate-800 mb-1">11. Si la respuesta fue SÍ, ¿cuál fue el o los diagnósticos que le dieron?</label>
+                <input type="text" id="p11_diagnosticos" placeholder="Ej. Apnea obstructiva del sueño, insomnio..." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-sky-600" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 12: Medicamentos para dormir -->
+          <div class="p-4 rounded-xl border border-slate-200 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-800">12. ¿Toma o ha tomado medicamentos para dormir?</span>
+              <div class="flex gap-4 text-xs font-semibold">
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="p12_med_dormir" value="SI" onchange="toggleBloque('bloque_p12', true)" />
+                  <span>SÍ</span>
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="p12_med_dormir" value="NO" onchange="toggleBloque('bloque_p12', false)" />
+                  <span>NO</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="bloque_p12" class="hidden pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Nombre de la droga</label>
+                <input type="text" id="p12_droga" placeholder="Nombre del fármaco" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Dosis</label>
+                <input type="text" id="p12_dosis" placeholder="Ej. 5 mg" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">¿Cada cuánto?</label>
+                <input type="text" id="p12_frecuencia" placeholder="Ej. Todas las noches" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Última dosis</label>
+                <input type="text" id="p12_ultima" placeholder="Ej. Anoche / Hace 1 mes" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 13: Tabla de todos los medicamentos -->
+          <div class="p-4 rounded-xl border border-slate-200 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p class="text-xs font-bold text-slate-800">13. Nombre todos los medicamentos que toma (formulados o no por un médico) e incluyendo oxígeno:</p>
+              <button type="button" onclick="agregarFilaMed13()" class="text-xs font-semibold bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 px-3 py-1.5 rounded-lg transition">
+                + Agregar fila
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                    <th class="py-2 px-3 w-10">#</th>
+                    <th class="py-2 px-3">Nombre del medicamento / Oxígeno</th>
+                    <th class="py-2 px-3">Dosis</th>
+                    <th class="py-2 px-3">¿Para cuál condición la toma?</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla_med13_body" class="divide-y divide-slate-100">
+                  <!-- 6 filas por defecto como en el PDF -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pregunta 14: Alteraciones médicas -->
+          <div class="p-4 rounded-xl border border-slate-200 space-y-3">
+            <p class="text-xs font-bold text-slate-800">14. ¿Tiene usted alguna de las siguientes alteraciones?</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                    <th class="py-2.5 px-3">Alteración / Condición</th>
+                    <th class="py-2.5 px-3 text-center w-16">SÍ</th>
+                    <th class="py-2.5 px-3 text-center w-16">NO</th>
+                    <th class="py-2.5 px-3">Desde cuándo / Observación</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla_alteraciones_body" class="divide-y divide-slate-100">
+                  <!-- Generado dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+            <div class="pt-2">
+              <label for="p14_otros" class="block text-xs font-semibold text-slate-700 mb-1">Si tiene algún otro problema de salud que no está en el listado por favor escríbalo(s):</label>
+              <input type="text" id="p14_otros" placeholder="Otros antecedentes médicos..." class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm" />
+            </div>
+          </div>
+
+          <!-- Preguntas 15, 16 y 17 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">15. ¿Le han realizado alguna cirugía?</span>
+                <div class="flex gap-3 text-xs font-semibold">
+                  <label class="flex items-center gap-1"><input type="radio" name="p15_cirugia" value="SI" /> SÍ</label>
+                  <label class="flex items-center gap-1"><input type="radio" name="p15_cirugia" value="NO" /> NO</label>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600">¿Cuál(es)?</label>
+                <input type="text" id="p15_cual" placeholder="Especifique cirugías" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm" />
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">16. ¿Ha ganado peso recientemente?</span>
+                <div class="flex gap-3 text-xs font-semibold">
+                  <label class="flex items-center gap-1"><input type="radio" name="p16_gano_peso" value="SI" /> SÍ</label>
+                  <label class="flex items-center gap-1"><input type="radio" name="p16_gano_peso" value="NO" /> NO</label>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">¿Cuánto? (Kg)</label>
+                  <input type="text" id="p16_cuanto" placeholder="Ej. 5 Kg" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Tiempo</label>
+                  <input type="text" id="p16_tiempo" placeholder="Ej. 6 meses" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm" />
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">17. ¿Ha perdido peso recientemente?</span>
+                <div class="flex gap-3 text-xs font-semibold">
+                  <label class="flex items-center gap-1"><input type="radio" name="p17_perdio_peso" value="SI" /> SÍ</label>
+                  <label class="flex items-center gap-1"><input type="radio" name="p17_perdio_peso" value="NO" /> NO</label>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">¿Cuánto? (Kg)</label>
+                  <input type="text" id="p17_cuanto" placeholder="Ej. 4 Kg" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600">Tiempo</label>
+                  <input type="text" id="p17_tiempo" placeholder="Ej. 3 meses" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 18: 20 Ítems SÍ / NO -->
+          <div class="p-4 rounded-xl border border-slate-200 space-y-3">
+            <p class="text-xs font-bold text-slate-800">18. Conteste SÍ o NO a las siguientes preguntas:</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                    <th class="py-2.5 px-3">Síntoma / Conducta durante el sueño</th>
+                    <th class="py-2.5 px-3 text-center w-16">SÍ</th>
+                    <th class="py-2.5 px-3 text-center w-16">NO</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla_p18_body" class="divide-y divide-slate-100">
+                  <!-- 20 ítems generados dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. ESCALA DE SOMNOLENCIA DIURNA DE EPWORTH -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-sky-800 text-white px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-wider">3. Escala de Somnolencia Diurna de Epworth</h2>
+            <p class="text-xs text-sky-100 mt-0.5">¿Qué tan probable es que usted se sienta somnoliento o se duerma en las siguientes situaciones?</p>
+          </div>
+          <div class="bg-white text-sky-900 px-3.5 py-1.5 rounded-xl font-extrabold text-xs shadow-sm">
+            Puntaje Total: <span id="epworth_total_badge" class="text-base text-sky-700">0</span> / 24
+          </div>
+        </div>
+
+        <div class="p-5 space-y-4">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] bg-sky-50 border border-sky-100 p-3 rounded-xl text-sky-900">
+            <div><span class="font-bold">0:</span> Nunca se queda dormido</div>
+            <div><span class="font-bold">1:</span> Escasa probabilidad</div>
+            <div><span class="font-bold">2:</span> Moderada probabilidad</div>
+            <div><span class="font-bold">3:</span> Alta probabilidad</div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                  <th class="py-2.5 px-3">Situación</th>
+                  <th class="py-2.5 px-2 text-center w-24">0<br><span class="font-normal text-[10px]">Nunca</span></th>
+                  <th class="py-2.5 px-2 text-center w-24">1<br><span class="font-normal text-[10px]">Escasa</span></th>
+                  <th class="py-2.5 px-2 text-center w-24">2<br><span class="font-normal text-[10px]">Moderada</span></th>
+                  <th class="py-2.5 px-2 text-center w-24">3<br><span class="font-normal text-[10px]">Alta</span></th>
+                </tr>
+              </thead>
+              <tbody id="tabla_epworth_body" class="divide-y divide-slate-100">
+                <!-- 8 situaciones generadas dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+            <span class="text-xs font-semibold text-slate-600" id="epworth_interpretacion">Interpretación: Somnolencia diurna normal (0 - 10 puntos).</span>
+            <span class="text-sm font-extrabold text-sky-800">Total: <span id="epworth_total_footer">0</span> / 24</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. PARA LLENAR DESPUÉS DE REALIZADO EL ESTUDIO -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-slate-800 text-white px-5 py-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider">4. Para Llenar Después de Realizado el Estudio (Paciente)</h2>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-2">1. ¿Cómo califica usted su sueño de anoche?</p>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_califica" value="Excelente" /> Excelente</label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_califica" value="Bueno" /> Bueno</label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_califica" value="Regular" /> Regular</label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_califica" value="Malo" /> Malo</label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_califica" value="No durmió" /> No durmió</label>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-2">2. Durmió anoche:</p>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_comparacion" value="Mejor que de costumbre" /> Mejor que de costumbre</label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_comparacion" value="Igual" /> Igual</label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"><input type="radio" name="post_comparacion" value="Peor que de costumbre" /> Peor que de costumbre</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">3. ¿Anoche tomó algún medicamento para dormir?</span>
+                <div class="flex gap-3 text-xs font-semibold">
+                  <label class="flex items-center gap-1"><input type="radio" name="post_med_anoche" value="SI" /> SÍ</label>
+                  <label class="flex items-center gap-1"><input type="radio" name="post_med_anoche" value="NO" /> NO</label>
+                </div>
+              </div>
+              <input type="text" id="post_med_cual" placeholder="¿Cuál medicamento tomó anoche?" class="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-sm" />
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200">
+              <label for="post_comentarios" class="block text-xs font-bold text-slate-800 mb-1">Comentarios adicionales referentes a su sueño o el estudio:</label>
+              <textarea id="post_comentarios" rows="2" placeholder="Escriba aquí sus comentarios..." class="w-full rounded-xl border border-slate-300 p-2.5 text-sm"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. PARA SER DILIGENCIADO POR EL TÉCNICO(A) -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-slate-800 text-white px-5 py-3 flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider">5. Para Ser Diligenciado por el Técnico(a)</h2>
+          <span class="text-xs text-slate-300">Registro Técnico</span>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="tec_indicacion" class="block text-xs font-semibold text-slate-700 mb-1">Indicación del estudio</label>
+              <input type="text" id="tec_indicacion" placeholder="Indicación clínica" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm" />
+            </div>
+            <div>
+              <label for="tec_apagar_luces" class="block text-xs font-semibold text-slate-700 mb-1">Apagar luces (hora)</label>
+              <input type="time" id="tec_apagar_luces" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+              <label class="flex items-center gap-2 text-xs font-bold text-sky-900">
+                <input type="checkbox" id="tec_psg_basal" />
+                <span>a. PSG Basal</span>
+              </label>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[11px] text-slate-600">Fecha del basal</label>
+                  <input type="date" id="tec_fecha_basal" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">Realizado en</label>
+                  <select id="tec_realizado_en" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs">
+                    <option value="">Seleccione...</option>
+                    <option value="CLÍNICA">CLÍNICA</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-600">Dx del PSG basal</label>
+                <input type="text" id="tec_dx_basal" placeholder="Diagnóstico basal" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs" />
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+              <label class="flex items-center gap-2 text-xs font-bold text-sky-900">
+                <input type="checkbox" id="tec_psg_cpap" />
+                <span>b. PSG C-PAP</span>
+              </label>
+              <div>
+                <label class="block text-[11px] text-slate-600">Tamaño de la máscara</label>
+                <input type="text" id="tec_tamano_mascara" placeholder="Ej. S / M / L - Nasal / Oronasal" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs" />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <label class="flex items-center gap-2 text-xs font-bold text-sky-900">
+                <input type="checkbox" id="tec_noche_partida" />
+                <span>c. NOCHE PARTIDA</span>
+              </label>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[11px] text-slate-600">1ª parte: IAH calculado (/hora)</label>
+                  <input type="text" id="tec_iah" placeholder="Ej. 28.5 /h" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">Tipo de evento</label>
+                  <input type="text" id="tec_tipo_evento" placeholder="Obstructivo / Central" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-600">2ª parte: Hora de inicio</label>
+                <input type="time" id="tec_hora_inicio_2parte" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs" />
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-900">d. Oxígeno / FIO2</span>
+                <label class="flex items-center gap-1.5 text-xs font-medium"><input type="checkbox" id="tec_fio2_21" checked /> FIO2: 21%</label>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="block text-[11px] text-slate-600">O2 Dosis</label>
+                  <input type="text" id="tec_o2_dosis" placeholder="L/min" class="w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">Hora inicio</label>
+                  <input type="time" id="tec_o2_inicio" class="w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">Hora fin</label>
+                  <input type="time" id="tec_o2_fin" class="w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-600">Motivo</label>
+                <input type="text" id="tec_o2_motivo" placeholder="Motivo suplemento O2" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs" />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-2">Signos vitales ANTES del estudio</p>
+              <div class="grid grid-cols-4 gap-2">
+                <div>
+                  <label class="block text-[11px] text-slate-600">TA</label>
+                  <input type="text" id="sv_antes_ta" placeholder="120/80" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">FC</label>
+                  <input type="text" id="sv_antes_fc" placeholder="72" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">FR</label>
+                  <input type="text" id="sv_antes_fr" placeholder="16" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">SatO2 (21%)</label>
+                  <input type="text" id="sv_antes_sat" placeholder="96%" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200">
+              <p class="text-xs font-bold text-slate-800 mb-2">Signos vitales AL FINALIZAR el estudio</p>
+              <div class="grid grid-cols-4 gap-2">
+                <div>
+                  <label class="block text-[11px] text-slate-600">TA</label>
+                  <input type="text" id="sv_despues_ta" placeholder="118/76" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">FC</label>
+                  <input type="text" id="sv_despues_fc" placeholder="68" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">FR</label>
+                  <input type="text" id="sv_despues_fr" placeholder="15" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-600">SatO2 (21%)</label>
+                  <input type="text" id="sv_despues_sat" placeholder="95%" class="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div class="p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-800">Ronquido:</span>
+              <div class="flex gap-3 text-xs font-semibold">
+                <label class="flex items-center gap-1"><input type="radio" name="tec_ronquido" value="SI" /> SÍ</label>
+                <label class="flex items-center gap-1"><input type="radio" name="tec_ronquido" value="NO" /> NO</label>
+              </div>
+            </div>
+            <div>
+              <label for="tec_intensidad" class="block text-xs font-semibold text-slate-700 mb-1">Intensidad del ronquido</label>
+              <select id="tec_intensidad" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+                <option value="">Seleccione...</option>
+                <option value="Leve">Leve</option>
+                <option value="Moderada">Moderada</option>
+                <option value="Severa">Severa</option>
+              </select>
+            </div>
+            <div>
+              <label for="tec_realiza_estudio" class="block text-xs font-semibold text-slate-700 mb-1">Realiza el estudio (Técnico/a)</label>
+              <input type="text" id="tec_realiza_estudio" placeholder="Nombre del técnico(a)" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+          </div>
+
+          <div>
+            <label for="tec_observaciones" class="block text-xs font-semibold text-slate-700 mb-1">Observaciones</label>
+            <textarea id="tec_observaciones" rows="2" placeholder="Observaciones técnicas del estudio..." class="w-full rounded-xl border border-slate-300 p-3 text-sm"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. CUESTIONARIO STOP-BANG -->
+      <section id="sec-stop-bang" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-sky-800 text-white px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-wider">6. Cuestionario STOP-BANG</h2>
+            <p class="text-xs text-sky-100 mt-0.5">CONTESTE SÍ O NO a las siguientes preguntas</p>
+          </div>
+          <div class="bg-white text-sky-900 px-3.5 py-1.5 rounded-xl font-extrabold text-xs shadow-sm">
+            Puntaje Total: <span id="stopbang_total_badge" class="text-base text-sky-700">0</span> / 8
+          </div>
+        </div>
+
+        <div class="p-5 space-y-4">
+          <!-- Escala de riesgo STOP-BANG -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] bg-sky-50 border border-sky-100 p-3 rounded-xl text-sky-900">
+            <div><span class="font-bold">Bajo riesgo:</span> SÍ 0 – 2</div>
+            <div><span class="font-bold">Riesgo intermedio:</span> SÍ 3 – 4</div>
+            <div><span class="font-bold">Alto riesgo:</span> SÍ 5 – 8</div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                  <th class="py-2.5 px-3 w-12">N°</th>
+                  <th class="py-2.5 px-3">Pregunta / Criterio</th>
+                  <th class="py-2.5 px-3 text-center w-16">SÍ</th>
+                  <th class="py-2.5 px-3 text-center w-16">NO</th>
+                </tr>
+              </thead>
+              <tbody id="tabla_stopbang_body" class="divide-y divide-slate-100">
+                <!-- 8 preguntas STOP-BANG generadas dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+            <span class="text-xs font-semibold text-slate-700" id="stopbang_interpretacion">Clasificación: Bajo riesgo (0 - 2 respuestas SÍ).</span>
+            <span class="text-sm font-extrabold text-sky-800">Puntaje total: <span id="stopbang_total_footer">0</span> / 8</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. CONSENTIMIENTO INFORMADO PARA POLISOMNOGRAMA NOCTURNO O ESTUDIO DE SUEÑO EN ADULTOS -->
+      <section id="sec-consentimiento" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-sky-800 text-white px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-wider">7. Consentimiento Informado para Polisomnograma Nocturno o Estudio de Sueño en Adultos</h2>
+            <p class="text-xs text-sky-100 mt-0.5">Subproceso de Centro de Estudios de Sueño</p>
+          </div>
+          <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/20">
+            <label for="ci_fecha" class="text-xs font-semibold text-sky-100">Fecha:</label>
+            <input type="date" id="ci_fecha" class="rounded-lg bg-white text-slate-800 px-2.5 py-1 text-xs font-medium outline-none" />
+          </div>
+        </div>
+
+        <div class="p-5 space-y-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-[13px] text-slate-700 leading-relaxed space-y-2.5">
+            <p>
+              Mediante este documento se le brindará información acerca del <strong>Procedimiento / Prueba / Tratamiento</strong> que ha sido solicitado por su Médico tratante, beneficios, riesgos y otras posibles alternativas (si existen). La información obtenida le permitirá tomar una decisión informada, libre y voluntaria para aceptar la intervención que se realizará.
+            </p>
+            <p class="font-bold text-slate-900 pt-1">Descripción</p>
+            <p>
+              El Centro de Estudios de Sueño de la <strong>Clínica de Especialistas Girardot</strong> le realizará esta noche un examen especializado del sueño llamado <strong>Polisomnografía (PSG)</strong>, el cual fue solicitado por su médico tratante. Este examen registra una serie de señales fisiológicas como son la actividad cerebral, la respiración, los ronquidos, la actividad del corazón, la actividad muscular, las diferentes posiciones que usted adopta mientras duerme, la cantidad de oxígeno en la sangre y los movimientos de los ojos.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-1">
+              <span>Este estudio se realiza en las horas de la noche en:</span>
+              <label class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-300 font-semibold text-slate-800 cursor-pointer">
+                <input type="checkbox" id="ci_lugar_clinica" />
+                <span>Las instalaciones de la Clínica</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-300 font-semibold text-slate-800 cursor-pointer">
+                <input type="checkbox" id="ci_lugar_domicilio" />
+                <span>En su domicilio</span>
+              </label>
+              <span>para que sea lo más parecido al sueño natural que usted tiene en condiciones habituales.</span>
+            </div>
+            <p>
+              Usted tendrá que llenar un cuestionario relacionado con posibles sucesos que se relacionan al sueño y se le hará una pequeña historia clínica, para el especialista del sueño.
+            </p>
+          </div>
+
+          <!-- Tabla: PROCEDIMIENTO A REALIZAR -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-100 px-4 py-2.5 border-b border-slate-200">
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Procedimiento a Realizar (marque el o los procedimientos solicitados)</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:gap-px bg-slate-200">
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Polisomnografía basal</span>
+                <input type="checkbox" id="ci_proc_1" value="Polisomnografía basal" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Polisomnografía de titulación de presión positiva</span>
+                <input type="checkbox" id="ci_proc_2" value="Polisomnografía de titulación de presión positiva" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Estudio de noche dividida</span>
+                <input type="checkbox" id="ci_proc_3" value="Estudio de noche dividida" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Pruebas de latencias múltiples de sueño</span>
+                <input type="checkbox" id="ci_proc_4" value="Pruebas de latencias múltiples de sueño" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Prueba de mantenimiento de vigilia</span>
+                <input type="checkbox" id="ci_proc_5" value="Prueba de mantenimiento de vigilia" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Capnografía</span>
+                <input type="checkbox" id="ci_proc_6" value="Capnografía" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Poligrafía Respiratoria</span>
+                <input type="checkbox" id="ci_proc_7" value="Poligrafía Respiratoria" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer">
+                <span>Actigrafía</span>
+                <input type="checkbox" id="ci_proc_8" value="Actigrafía" />
+              </label>
+              <label class="flex items-center justify-between bg-white px-4 py-2.5 text-xs font-medium text-slate-800 hover:bg-sky-50/60 cursor-pointer md:col-span-2">
+                <span>Titulación con CPAP automático</span>
+                <input type="checkbox" id="ci_proc_9" value="Titulación con CPAP automático" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Casilla de aceptación libre y voluntaria -->
+          <label class="flex items-start gap-3 p-3.5 rounded-xl bg-sky-50/80 border border-sky-200 cursor-pointer">
+            <input type="checkbox" id="ci_acepto_consentimiento" class="mt-0.5" checked />
+            <span class="text-xs font-semibold text-sky-950 leading-relaxed">
+              Declaro que he leído y comprendido la información anterior y acepto de manera libre y voluntaria la realización del procedimiento seleccionado (respaldado con mi firma digital al final del formulario).
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 8. FIRMA DIGITAL + BOTONES GUARDAR CAMBIOS Y EXPORTAR Y ENVIAR -->
+      <section id="sec-firma" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-[#073673] text-white px-5 py-3 flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider">8. Firma Digital y Envío</h2>
+          <button type="button" onclick="toggleConfigEmailJS()" class="text-[11px] text-sky-200 hover:text-white underline">
+            Configurar API EmailJS (Opcional)
+          </button>
+        </div>
+
+        <div class="p-5 space-y-4">
+          <!-- Panel opcional de configuración de EmailJS -->
+          <div id="panel-emailjs" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-200 space-y-3 text-xs">
+            <p class="font-bold text-amber-900">Configuración opcional de envío automático en segundo plano (EmailJS):</p>
+            <p class="text-amber-800">
+              Si configuras tus claves gratuitas de <strong>EmailJS</strong> (con una plantilla que reciba <code>to_email</code> y el adjunto Base64 <code>pdf_attachment</code>), el PDF se enviará directamente al correo que digites sin abrir ventanas externas.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="ejs_public_key" placeholder="Public Key (ej. user_xxx)" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5" />
+              <input type="text" id="ejs_service_id" placeholder="Service ID (ej. service_xxx)" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5" />
+              <input type="text" id="ejs_template_id" placeholder="Template ID (ej. template_xxx)" class="rounded-lg border border-amber-300 bg-white px-3 py-1.5" />
+            </div>
+            <div class="flex justify-end">
+              <button type="button" onclick="guardarConfigEmailJS()" class="bg-amber-700 hover:bg-amber-800 text-white font-semibold px-3.5 py-1.5 rounded-lg">
+                Guardar configuración
+              </button>
+            </div>
+          </div>
+
+          <!-- Recuadro de firma digital -->
+          <div>
+            <p class="text-xs font-semibold text-slate-700 mb-2">
+              Dibuje su firma digital en el siguiente recuadro para respaldar el Consentimiento Informado y el Cuestionario Clínico:
+            </p>
+            <div class="relative rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 overflow-hidden">
+              <canvas id="signature-pad" class="signature-canvas w-full h-44 block"></canvas>
+              <div id="signature-placeholder" class="pointer-events-none absolute inset-0 flex items-center justify-center text-slate-400 text-xs sm:text-sm select-none">
+                Firme aquí dentro del recuadro
+              </div>
+              <button type="button" onclick="limpiarFirma()" class="absolute top-2.5 right-2.5 bg-white/90 hover:bg-white text-slate-600 hover:text-rose-600 border border-slate-200 text-[11px] font-semibold px-2.5 py-1 rounded-lg shadow-sm transition">
+                Limpiar firma
+              </button>
+            </div>
+          </div>
+
+          <!-- DOS BOTONES PRINCIPALES: GUARDAR CAMBIOS Y EXPORTAR Y ENVIAR -->
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+            <button type="button" id="btn-guardar-cambios" onclick="guardarCambiosFormulario()"
+              class="w-full sm:w-auto sm:min-w-[230px] bg-white hover:bg-slate-50 active:scale-[0.99] text-[#073673] border-2 border-[#073673] font-extrabold text-sm sm:text-base tracking-wide px-7 py-3.5 rounded-2xl shadow-sm transition flex items-center justify-center gap-2.5">
+              <svg class="w-5 h-5 text-[#073673]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h8l4 4v12a2 2 0 01-2 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 21v-6h6v6M9 3v4h5" />
+              </svg>
+              <span>GUARDAR CAMBIOS</span>
+            </button>
+
+            <button type="button" id="btn-exportar-enviar" onclick="procesarEnvioFormulario()"
+              class="w-full sm:w-auto sm:min-w-[250px] bg-gradient-to-r from-[#073673] to-[#0e7490] hover:from-[#052957] hover:to-[#0c637a] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base tracking-wide px-8 py-4 rounded-2xl shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2.5">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+              <span>EXPORTAR Y ENVIAR</span>
+            </button>
+          </div>
+          <p id="estado-guardado-texto" class="hidden text-center text-xs font-semibold text-emerald-700">
+            ✓ Datos guardados correctamente en este dispositivo.
+          </p>
+        </div>
+      </section>
+
+    </form>
+  </main>
+
+  <!-- VENTANA EMERGENTE DE ENVÍO POR CORREO Y ADJUNTO PDF -->
+  <div id="modal-envio-correo" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-[#073673] to-[#0a468c] text-white px-5 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-sky-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <h3 class="text-sm font-bold tracking-wide">Enviar Formulario Resuelto en PDF</h3>
+        </div>
+        <button type="button" onclick="cerrarModalEnvioCorreo()" class="text-sky-200 hover:text-white text-lg font-bold leading-none px-1.5" aria-label="Cerrar ventana">&times;</button>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <!-- Archivo PDF descargado en segundo plano -->
+        <div class="flex items-center justify-between gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="bg-rose-600 text-white text-[10px] font-extrabold px-2 py-1 rounded-md shrink-0">PDF</div>
+            <div class="min-w-0">
+              <p id="modal_pdf_nombre" class="text-xs font-bold text-slate-800 truncate">Formulario_Especialistas_Girardot.pdf</p>
+              <p id="modal_pdf_peso" class="text-[11px] text-emerald-700 font-medium">✓ PDF descargado listo para adjuntar</p>
+            </div>
+          </div>
+          <button type="button" onclick="descargarNuevamentePDF()" class="shrink-0 text-[11px] font-semibold bg-white hover:bg-slate-50 text-sky-800 border border-slate-300 px-2.5 py-1.5 rounded-lg shadow-2xs transition">
+            Descargar otra vez
+          </button>
+        </div>
+
+        <!-- Campo editable para escribir el correo electrónico destinatario -->
+        <div>
+          <label for="modal_correo_para" class="block text-xs font-bold text-slate-700 mb-1">
+            Correo electrónico destinatario <span class="text-rose-600">*</span>
+          </label>
+          <input type="email" id="modal_correo_para" placeholder="Escriba el correo electrónico destino (ej. segl@clinicadeespecialistas.com)"
+            class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-medium text-slate-900 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+        </div>
+
+        <!-- Asunto del correo -->
+        <div>
+          <label for="modal_correo_asunto" class="block text-xs font-bold text-slate-700 mb-1">
+            Asunto del correo
+          </label>
+          <input type="text" id="modal_correo_asunto"
+            class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs text-slate-800 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none" />
+        </div>
+
+        <!-- Mensaje del correo -->
+        <div>
+          <label for="modal_correo_mensaje" class="block text-xs font-bold text-slate-700 mb-1">
+            Mensaje
+          </label>
+          <textarea id="modal_correo_mensaje" rows="3"
+            class="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-800 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20 outline-none"></textarea>
+        </div>
+
+        <!-- Selector para adjuntar el documento PDF descargado -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+          <label for="modal_input_adjunto" class="block text-[11px] font-bold text-slate-700 mb-1">
+            Adjuntar documento PDF descargado:
+          </label>
+          <input type="file" id="modal_input_adjunto" accept="application/pdf" onchange="actualizarNombreAdjuntoSeleccionado(this)"
+            class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-800 hover:file:bg-sky-200 cursor-pointer" />
+          <p id="modal_adjunto_confirmado" class="hidden text-[11px] text-emerald-700 font-semibold mt-1"></p>
+        </div>
+
+        <!-- Botones de acción dentro de la ventana emergente -->
+        <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
+          <button type="button" id="btn-compartir-nativo" onclick="compartirPDFConAdjunto()"
+            class="hidden flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl shadow-sm transition items-center justify-center gap-2">
+            <span>Compartir PDF Adjunto</span>
+          </button>
+
+          <button type="button" id="btn-modal-enviar-correo" onclick="abrirGmailDesdeModal()"
+            class="flex-1 bg-gradient-to-r from-[#073673] to-[#0e7490] hover:from-[#052957] hover:to-[#0c637a] text-white font-bold text-xs sm:text-sm py-3 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+            <span>ENVIAR</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE NOTIFICACIÓN -->
+  <div id="custom-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <h3 id="modal-title" class="text-base font-bold text-slate-900">Aviso</h3>
+      <p id="modal-message" class="text-sm text-slate-600 leading-relaxed"></p>
+      <div class="flex justify-end pt-2">
+        <button type="button" onclick="cerrarModal()" class="bg-[#073673] hover:bg-[#052957] text-white text-xs font-semibold px-5 py-2.5 rounded-xl">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. DATOS DE TABLAS DINÁMICAS EXTRAÍDOS DEL PDF
+    // =========================================================================
+    const listaAlteracionesP14 = [
+      { id: 'poliglobulia', label: '"Sangre gruesa" (Poliglobulia)' },
+      { id: 'hta', label: 'Hipertensión Arterial' },
+      { id: 'ht_pulmonar', label: 'Hipertensión pulmonar' },
+      { id: 'epoc', label: 'EPOC (Enfisema / Bronquitis crónica)' },
+      { id: 'hipotiroidismo', label: 'Hipotiroidismo' },
+      { id: 'deformidad_torax', label: 'Deformidad de tórax / columna' },
+      { id: 'trombosis', label: 'Trombosis / hemorragia cerebral' },
+      { id: 'convulsiones', label: 'Convulsiones / Epilepsia' },
+      { id: 'neurologica', label: 'Enfermedad neurológica (explique cuál)' },
+      { id: 'cardiaca', label: 'Enfermedad cardiaca (explique cuál)' },
+      { id: 'down', label: 'Síndrome de Down' },
+      { id: 'diabetes', label: 'Diabetes' },
+      { id: 'depresion', label: 'Depresión' },
+      { id: 'alergias_piel', label: 'Alergias en la piel' }
+    ];
+
+    const listaPreguntasP18 = [
+      '¿Ronca?',
+      '¿Su ronquido afecta el sueño de su compañero(a)?',
+      '¿Le han dicho que durmiendo tiene períodos de dejar de respirar?',
+      '¿Es su sueño reparador (se despierta descansado)?',
+      '¿En ocasiones se despierta con dolor de cabeza?',
+      '¿En ocasiones se despierta ahogado / atorado?',
+      '¿Acostumbra a dormir siesta? (Indique cuántas al día en comentarios si aplica)',
+      '¿Se siente mejor después de la siesta?',
+      '¿Tiene disminución o pérdida de la fuerza muscular de forma abrupta reversible, generalmente desencadenado por emociones?',
+      '¿Ha despertado con imposibilidad de moverse (Parálisis) durante unos minutos?',
+      '¿Tiene sueños vívidos mientras está despierto (alucinaciones)?',
+      '¿Habla dormido?',
+      '¿Camina dormido ("sonámbulo")?',
+      '¿En reposo, antes de dormir, tiene molestia, "picazón" en las piernas que se alivia con moverlas?',
+      '¿Esta molestia en las piernas le impide quedarse dormido?',
+      '¿Le han dicho que mueve las piernas mientras está dormido?',
+      '¿Ha consultado alguna vez a un psiquiatra o psicólogo?',
+      '¿Le chirrean los dientes mientras duerme (bruxismo)?',
+      '¿Se ha orinado mientras duerme?',
+      '¿En general considera usted que sufre de excesivo sueño en el día?'
+    ];
+
+    const situacionesEpworth = [
+      'Sentado leyendo',
+      'Mirando TV',
+      'Sentado e inactivo en un lugar público',
+      'Como pasajero en un carro durante una hora de marcha continua',
+      'Acostado, descansando en la tarde',
+      'Sentado y conversando con alguien',
+      'Sentado, tranquilo, después de un almuerzo sin alcohol',
+      'En un carro, mientras se detiene unos minutos en un trancón'
+    ];
+
+    const preguntasStopBang = [
+      '¿Usted ronca fuerte? (ronquido más intenso que el volumen de la voz al hablar o que se escuche con la puerta de la habitación cerrada)',
+      '¿Usted se siente cansado, fatigado o somnoliento durante el día?',
+      '¿Le han comentado que hace pausas o deja de respirar cuando duerme?',
+      '¿Usted tiene o ha tenido hipertensión arterial?',
+      'Índice de masa corporal mayor a 35 kg/m²',
+      'Edad mayor de 50 años',
+      'Circunferencia del cuello (mayor a 40 cm)',
+      'Sexo masculino'
+    ];
+
+    let contadorMed13 = 0;
+
+    // =========================================================================
+    // 2. INICIALIZACIÓN DE TABLAS Y FECHA ACTUAL
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const hoy = new Date().toISOString().split('T')[0];
+      document.getElementById('pac_fecha_examen').value = hoy;
+      document.getElementById('ci_fecha').value = hoy;
+
+      for (let i = 0; i < 6; i++) {
+        agregarFilaMed13();
+      }
+
+      const tbodyAlt = document.getElementById('tabla_alteraciones_body');
+      listaAlteracionesP14.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2 px-3 font-medium text-slate-800">${item.label}</td>
+          <td class="py-2 px-3 text-center">
+            <input type="radio" name="alt_${item.id}" value="SI" aria-label="${item.label} SÍ" />
+          </td>
+          <td class="py-2 px-3 text-center">
+            <input type="radio" name="alt_${item.id}" value="NO" aria-label="${item.label} NO" />
+          </td>
+          <td class="py-2 px-3">
+            <input type="text" id="alt_desde_${item.id}" placeholder="Desde cuándo / detalle" class="w-full rounded-lg border border-slate-200 px-2.5 py-1 text-xs focus:border-sky-600 outline-none" />
+          </td>
+        `;
+        tbodyAlt.appendChild(tr);
+      });
+
+      const tbodyP18 = document.getElementById('tabla_p18_body');
+      listaPreguntasP18.forEach((pregunta, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2 px-3 text-slate-800">${pregunta}</td>
+          <td class="py-2 px-3 text-center">
+            <input type="radio" name="p18_${idx}" value="SI" />
+          </td>
+          <td class="py-2 px-3 text-center">
+            <input type="radio" name="p18_${idx}" value="NO" />
+          </td>
+        `;
+        tbodyP18.appendChild(tr);
+      });
+
+      const tbodyEpw = document.getElementById('tabla_epworth_body');
+      situacionesEpworth.forEach((situacion, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-medium text-slate-800">${situacion}</td>
+          ${[0, 1, 2, 3].map((val) => `
+            <td class="py-2.5 px-2 text-center">
+              <input type="radio" name="epw_${idx}" value="${val}" onchange="calcularEpworth()" />
+            </td>
+          `).join('')}
+        `;
+        tbodyEpw.appendChild(tr);
+      });
+
+      const tbodyStopBang = document.getElementById('tabla_stopbang_body');
+      preguntasStopBang.forEach((pregunta, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-bold text-slate-600">${idx + 1}</td>
+          <td class="py-2.5 px-3 font-medium text-slate-800">${pregunta}</td>
+          <td class="py-2.5 px-3 text-center">
+            <input type="radio" name="sb_${idx}" value="SI" onchange="calcularStopBang()" />
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            <input type="radio" name="sb_${idx}" value="NO" onchange="calcularStopBang()" />
+          </td>
+        `;
+        tbodyStopBang.appendChild(tr);
+      });
+
+      const savedPub = localStorage.getItem('especialistas_girardot_ejs_pub') || '';
+      const savedSrv = localStorage.getItem('especialistas_girardot_ejs_srv') || '';
+      const savedTpl = localStorage.getItem('especialistas_girardot_ejs_tpl') || '';
+      document.getElementById('ejs_public_key').value = savedPub;
+      document.getElementById('ejs_service_id').value = savedSrv;
+      document.getElementById('ejs_template_id').value = savedTpl;
+
+      inicializarFirmaDigital();
+      restaurarCambiosGuardados();
+    });
+
+    function agregarFilaMed13() {
+      contadorMed13++;
+      const tbody = document.getElementById('tabla_med13_body');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="py-1.5 px-3 font-semibold text-slate-500">${contadorMed13}.</td>
+        <td class="py-1.5 px-2"><input type="text" id="med13_nombre_${contadorMed13}" placeholder="Medicamento" class="w-full rounded-lg border border-slate-200 px-2.5 py-1 text-xs" /></td>
+        <td class="py-1.5 px-2"><input type="text" id="med13_dosis_${contadorMed13}" placeholder="Dosis" class="w-full rounded-lg border border-slate-200 px-2.5 py-1 text-xs" /></td>
+        <td class="py-1.5 px-2"><input type="text" id="med13_condicion_${contadorMed13}" placeholder="Condición médica" class="w-full rounded-lg border border-slate-200 px-2.5 py-1 text-xs" /></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    // =========================================================================
+    // 3. CÁLCULOS AUTOMÁTICOS (EDAD, IMC, EPWORTH, STOP-BANG) Y CONTROLES UI
+    // =========================================================================
+    function toggleBloque(id, mostrar) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (mostrar) el.classList.remove('hidden');
+      else el.classList.add('hidden');
+    }
+
+    function calcularEdadDesdeNacimiento() {
+      const fn = document.getElementById('pac_nacimiento').value;
+      if (!fn) return;
+      const birth = new Date(fn);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+      }
+      if (age >= 0) {
+        document.getElementById('pac_edad').value = age;
+      }
+    }
+
+    function calcularIMC() {
+      const tallaCm = parseFloat(document.getElementById('pac_talla').value);
+      const pesoKg = parseFloat(document.getElementById('pac_peso').value);
+      const imcInput = document.getElementById('pac_imc');
+      if (tallaCm > 0 && pesoKg > 0) {
+        const tallaM = tallaCm / 100;
+        const imc = (pesoKg / (tallaM * tallaM)).toFixed(1);
+        imcInput.value = `${imc} kg/m²`;
+      } else {
+        imcInput.value = '';
+      }
+    }
+
+    function calcularEpworth() {
+      let total = 0;
+      for (let i = 0; i < situacionesEpworth.length; i++) {
+        const checked = document.querySelector(`input[name="epw_${i}"]:checked`);
+        if (checked) {
+          total += parseInt(checked.value, 10);
+        }
+      }
+      document.getElementById('epworth_total_badge').textContent = total;
+      document.getElementById('epworth_total_footer').textContent = total;
+
+      let interp = 'Somnolencia diurna normal (0 - 10 puntos).';
+      if (total >= 11 && total <= 14) interp = 'Somnolencia diurna leve (11 - 14 puntos).';
+      else if (total >= 15 && total <= 17) interp = 'Somnolencia diurna moderada (15 - 17 puntos).';
+      else if (total >= 18) interp = 'Somnolencia diurna severa (18 - 24 puntos).';
+
+      document.getElementById('epworth_interpretacion').textContent = `Interpretación: ${interp}`;
+      return total;
+    }
+
+    function calcularStopBang() {
+      let total = 0;
+      for (let i = 0; i < preguntasStopBang.length; i++) {
+        const checked = document.querySelector(`input[name="sb_${i}"]:checked`);
+        if (checked && checked.value === 'SI') {
+          total++;
+        }
+      }
+      document.getElementById('stopbang_total_badge').textContent = total;
+      document.getElementById('stopbang_total_footer').textContent = total;
+
+      let clasif = 'Bajo riesgo (SÍ 0 – 2)';
+      if (total >= 3 && total <= 4) clasif = 'Riesgo intermedio (SÍ 3 – 4)';
+      else if (total >= 5) clasif = 'Alto riesgo (SÍ 5 – 8)';
+
+      document.getElementById('stopbang_interpretacion').textContent = `Clasificación: ${clasif}`;
+      return { total, clasif };
+    }
+
+    function mostrarAviso(titulo, mensaje) {
+      document.getElementById('modal-title').textContent = titulo;
+      document.getElementById('modal-message').innerHTML = mensaje;
+      const modal = document.getElementById('custom-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function cerrarModal() {
+      const modal = document.getElementById('custom-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function toggleConfigEmailJS() {
+      const panel = document.getElementById('panel-emailjs');
+      panel.classList.toggle('hidden');
+    }
+
+    function guardarConfigEmailJS() {
+      localStorage.setItem('especialistas_girardot_ejs_pub', document.getElementById('ejs_public_key').value.trim());
+      localStorage.setItem('especialistas_girardot_ejs_srv', document.getElementById('ejs_service_id').value.trim());
+      localStorage.setItem('especialistas_girardot_ejs_tpl', document.getElementById('ejs_template_id').value.trim());
+      mostrarAviso('Configuración guardada', 'Las credenciales de EmailJS se han guardado localmente en este navegador.');
+    }
+
+    // =========================================================================
+    // 4. FIRMA DIGITAL EN CANVAS (RATÓN Y PANTALLA TÁCTIL)
+    // =========================================================================
+    let canvas, ctx;
+    let isDrawing = false;
+    let hasSigned = false;
+
+    function inicializarFirmaDigital() {
+      canvas = document.getElementById('signature-pad');
+      ctx = canvas.getContext('2d');
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2.4;
+      }
+
+      resizeCanvas();
+      window.addEventListener('resize', () => {
+        if (!hasSigned) resizeCanvas();
+      });
+
+      function getCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        if (e.touches && e.touches.length > 0) {
+          return {
+            x: e.touches[0].clientX - rect.left,
+            y: e.touches[0].clientY - rect.top
+          };
+        }
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+
+      function startDraw(e) {
+        isDrawing = true;
+        hasSigned = true;
+        document.getElementById('signature-placeholder').classList.add('hidden');
+        const pos = getCoords(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function moveDraw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const pos = getCoords(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
+
+      function endDraw() {
+        isDrawing = false;
+      }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', moveDraw);
+      window.addEventListener('mouseup', endDraw);
+
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', moveDraw, { passive: false });
+      canvas.addEventListener('touchend', endDraw);
+    }
+
+    function limpiarFirma() {
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      hasSigned = false;
+      document.getElementById('signature-placeholder').classList.remove('hidden');
+    }
+
+    // =========================================================================
+    // 5. UTILIDADES DE LECTURA DEL FORMULARIO
+    // =========================================================================
+    function getVal(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+
+    function getRadio(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : 'Sin responder';
+    }
+
+    function obtenerLogoDataURL() {
+      return new Promise((resolve) => {
+        try {
+          const svgEl = document.getElementById('logo-clinica-especialistas-svg');
+          if (!svgEl) {
+            resolve(null);
+            return;
+          }
+          const serializer = new XMLSerializer();
+          const svgString = serializer.serializeToString(svgEl);
+          const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(svgBlob);
+          const img = new Image();
+          img.onload = function () {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = 640;
+            tempCanvas.height = 580;
+            const tCtx = tempCanvas.getContext('2d');
+            tCtx.fillStyle = '#FFFFFF';
+            tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            tCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+            URL.revokeObjectURL(url);
+            resolve(tempCanvas.toDataURL('image/png'));
+          };
+          img.onerror = function () {
+            URL.revokeObjectURL(url);
+            resolve(null);
+          };
+          img.src = url;
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    }
+
+    // =========================================================================
+    // 6. GENERACIÓN PROFESIONAL DE PDF CON jsPDF + AutoTable
+    // =========================================================================
+    function construirDocumentoPDF(logoDataUrl) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 14;
+      let y = 14;
+
+      const azulOscuro = [7, 54, 115];
+      const azulMedio = [3, 105, 161];
+      const grisFondo = [241, 245, 249];
+
+      function dibujarEncabezado() {
+        const headerHeight = 25;
+        doc.setFillColor(...azulOscuro);
+        doc.rect(margin, y, pageWidth - margin * 2, headerHeight, 'F');
+
+        let textStartX = margin + 4;
+        if (logoDataUrl) {
+          const logoBoxW = 22;
+          const logoBoxH = 20;
+          doc.setFillColor(255, 255, 255);
+          doc.roundedRect(margin + 2.5, y + 2.5, logoBoxW, logoBoxH, 1.5, 1.5, 'F');
+          doc.addImage(logoDataUrl, 'PNG', margin + 3, y + 3, logoBoxW - 1, logoBoxH - 1);
+          textStartX = margin + logoBoxW + 6;
+        }
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10.5);
+        doc.text('CLÍNICA DE ESPECIALISTAS GIRARDOT', textStartX, y + 6.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.5);
+        doc.text('Calle 13 No. 10 - 49, Barrio San Miguel, Girardot • Tel / WhatsApp: (+57) 317 433 6098', textStartX, y + 11.5);
+        doc.text('Correo: segl@clinicadeespecialistas.com • Consulta externa L-V 6am-6pm • Urgencias 24h', textStartX, y + 15.8);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7.8);
+        doc.setTextColor(186, 230, 253);
+        doc.text('CUESTIONARIO DE POLISOMNOGRAFÍA Y CONSENTIMIENTO INFORMADO', textStartX, y + 20.8);
+        y += headerHeight + 4;
+      }
+
+      function tituloSeccion(texto) {
+        if (y > pageHeight - 28) {
+          doc.addPage();
+          y = 14;
+        }
+        doc.setFillColor(...azulMedio);
+        doc.rect(margin, y, pageWidth - margin * 2, 7, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9.5);
+        doc.text(texto, margin + 3, y + 4.8);
+        y += 9;
+      }
+
+      dibujarEncabezado();
+
+      // 1. Datos Personales del Paciente
+      tituloSeccion('1. DATOS PERSONALES DEL PACIENTE');
+      const tipoDocPDF = getVal('pac_tipo_doc') || 'CC';
+      const numDocPDF = getVal('pac_cc') || '---';
+
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 2, textColor: [15, 23, 42] },
+        body: [
+          [
+            `Apellidos: ${getVal('pac_apellidos') || '---'}`,
+            `Nombres: ${getVal('pac_nombres') || '---'}`,
+            `Fecha examen: ${getVal('pac_fecha_examen') || '---'}`
+          ],
+          [
+            `Documento (${tipoDocPDF}): ${numDocPDF}`,
+            `Teléfono: ${getVal('pac_telefono') || '---'}`,
+            `Empresa médica: ${getVal('pac_empresa') || '---'}`
+          ],
+          [
+            { content: `Md. que remite: ${getVal('pac_medico') || '---'}`, colSpan: 2 },
+            `Fecha nac.: ${getVal('pac_nacimiento') || '---'} (${getVal('pac_edad') || '--'} años)`
+          ],
+          [
+            `Talla: ${getVal('pac_talla') || '--'} cm | Peso: ${getVal('pac_peso') || '--'} Kg`,
+            `IMC: ${getVal('pac_imc') || '--'}`,
+            `Cuello: ${getVal('pac_cuello') || '--'} cm | Abdomen: ${getVal('pac_abdomen') || '--'} cm`
+          ]
+        ]
+      });
+      y = doc.lastAutoTable.finalY + 5;
+
+      // 2. Cuestionario Clínico (Preguntas 1 a 12)
+      tituloSeccion('2. CUESTIONARIO CLÍNICO DE HÁBITOS DE SUEÑO (PREGUNTAS 1 - 12)');
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 2, textColor: [15, 23, 42] },
+        headStyles: { fillColor: grisFondo, textColor: [15, 23, 42], fontStyle: 'bold' },
+        head: [['Pregunta', 'Respuesta registrada']],
+        body: [
+          ['1. Hora de acostarse', `Días laborales: ${getVal('p1_laborales') || '--:--'} | Días de descanso: ${getVal('p1_descanso') || '--:--'}`],
+          ['2. Hora de levantarse', `Días laborales: ${getVal('p2_laborales') || '--:--'} | Días de descanso: ${getVal('p2_descanso') || '--:--'}`],
+          ['3. Horas efectivas de sueño', `Días laborales: ${getVal('p3_laborales') || '--'} h | Días de descanso: ${getVal('p3_descanso') || '--'} h`],
+          ['4. Tiempo para quedarse dormido', getRadio('p4_latencia')],
+          ['5. ¿Qué tal duerme en la noche?', getRadio('p5_calidad')],
+          ['6. ¿Se despierta varias veces en la noche?', `${getRadio('p6_despierta')} | Veces: ${getVal('p6_cuantas_veces') || 'N/A'} | Qué lo despierta: ${getVal('p6_que_despierta') || 'N/A'} | Conducta: ${getVal('p6_levanta_o_cama') || 'N/A'}`],
+          ['7. Tiempo en volver a conciliar el sueño', getRadio('p7_volver_dormir')],
+          ['8. ¿Considera que tiene dificultades con su sueño?', `${getRadio('p8_dificultad')} | Tiempo: ${getVal('p8_tiempo_num') || '--'} ${getVal('p8_tiempo_unidad')} | Severidad: ${getRadio('p8_severidad')} | Quedarse: ${getRadio('p8_quedarse')} | Permanecer: ${getRadio('p8_permanecer')} | Despierta temprano: ${getRadio('p8_temprano')}`],
+          ['9. ¿Cuál considera que es su problema de sueño?', getVal('p9_problema') || 'Sin descripción'],
+          ['10 y 11. ¿Ha consultado antes? / Diagnósticos', `Consultó: ${getRadio('p10_consulto')} | Diagnósticos: ${getVal('p11_diagnosticos') || 'Ninguno registrado'}`],
+          ['12. ¿Toma o ha tomado medicamentos para dormir?', `${getRadio('p12_med_dormir')} | Droga: ${getVal('p12_droga') || 'N/A'} | Dosis: ${getVal('p12_dosis') || 'N/A'} | Frecuencia: ${getVal('p12_frecuencia') || 'N/A'} | Última: ${getVal('p12_ultima') || 'N/A'}`]
+        ]
+      });
+      y = doc.lastAutoTable.finalY + 5;
+
+      // 3. Medicamentos actuales (P13)
+      tituloSeccion('3. MEDICAMENTOS ACTUALES Y OXÍGENO (PREGUNTA 13)');
+      const filasMed = [];
+      for (let i = 1; i <= contadorMed13; i++) {
+        const nom = getVal(`med13_nombre_${i}`);
+        const dos = getVal(`med13_dosis_${i}`);
+        const con = getVal(`med13_condicion_${i}`);
+        if (nom || dos || con) {
+          filasMed.push([`${i}.`, nom || '---', dos || '---', con || '---']);
+        }
+      }
+      if (filasMed.length === 0) {
+        filasMed.push(['-', 'No reporta medicamentos actuales', '-', '-']);
+      }
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: grisFondo, textColor: [15, 23, 42], fontStyle: 'bold' },
+        head: [['#', 'Nombre del medicamento / Oxígeno', 'Dosis', 'Condición médica']],
+        body: filasMed
+      });
+      y = doc.lastAutoTable.finalY + 5;
+
+      // 4. Alteraciones médicas (P14) y P15-P17
+      tituloSeccion('4. ANTECEDENTES PATOLÓGICOS, CIRUGÍAS Y CAMBIOS DE PESO (PREGUNTAS 14 - 17)');
+      const filasAlt = listaAlteracionesP14.map((item) => [
+        item.label,
+        getRadio(`alt_${item.id}`),
+        getVal(`alt_desde_${item.id}`) || '---'
+      ]);
+      filasAlt.push(['Otros problemas de salud', '-', getVal('p14_otros') || 'Ninguno']);
+      filasAlt.push(['15. ¿Le han realizado alguna cirugía?', getRadio('p15_cirugia'), getVal('p15_cual') || '---']);
+      filasAlt.push(['16. ¿Ha ganado peso recientemente?', getRadio('p16_gano_peso'), `${getVal('p16_cuanto') || '--'} en ${getVal('p16_tiempo') || '--'}`]);
+      filasAlt.push(['17. ¿Ha perdido peso recientemente?', getRadio('p17_perdio_peso'), `${getVal('p17_cuanto') || '--'} en ${getVal('p17_tiempo') || '--'}`]);
+
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 7.8, cellPadding: 1.8 },
+        headStyles: { fillColor: grisFondo, textColor: [15, 23, 42], fontStyle: 'bold' },
+        head: [['Alteración / Antecedente', 'Respuesta', 'Desde cuándo / Detalle']],
+        body: filasAlt
+      });
+      y = doc.lastAutoTable.finalY + 5;
+
+      // 5. Pregunta 18 (20 ítems)
+      tituloSeccion('5. SÍNTOMAS Y CONDUCTAS DURANTE EL SUEÑO (PREGUNTA 18)');
+      const filasP18 = listaPreguntasP18.map((preg, idx) => [preg, getRadio(`p18_${idx}`)]);
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 7.8, cellPadding: 1.8 },
+        headStyles: { fillColor: grisFondo, textColor: [15, 23, 42], fontStyle: 'bold' },
+        head: [['Pregunta', 'Respuesta']],
+        body: filasP18
+      });
+      y = doc.lastAutoTable.finalY + 5;
+
+      // 6. Escala de Somnolencia de Epworth
+      tituloSeccion('6. ESCALA DE SOMNOLENCIA DIURNA DE EPWORTH');
+      const totalEpw = calcularEpworth();
+      const filasEpw = situacionesEpworth.map((sit, idx) => {
+        const val = document.querySelector(`input[name="epw_${idx}"]:checked`)?.value ?? '0';
+        return [sit, `${val} puntos`];
+      });
+      filasEpw.push([
+        { content: 'PUNTAJE TOTAL ESCALA DE EPWORTH', styles: { fontStyle: 'bold', fillColor: grisFondo } },
+        { content: `${totalEpw} / 24 puntos`, styles: { fontStyle: 'bold', fillColor: grisFondo } }
+      ]);
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: grisFondo, textColor: [15, 23, 42], fontStyle: 'bold' },
+        head: [['Situación evaluada', 'Puntuación (0-3)']],
+        body: filasEpw
+      });
+      y = doc.lastAutoTable.finalY + 5;
+
+      // 7. Post-estudio y Registro Técnico
+      tituloSeccion('7. EVALUACIÓN POST-ESTUDIO Y REGISTRO DEL TÉCNICO(A)');
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 7.8, cellPadding: 2 },
+        body: [
+          ['Calificación sueño anoche (Paciente)', `${getRadio('post_califica')} | Comparación: ${getRadio('post_comparacion')}`],
+          ['Medicamento anoche / Comentarios', `Tomó med: ${getRadio('post_med_anoche')} (${getVal('post_med_cual') || 'N/A'}) | Comentarios: ${getVal('post_comentarios') || 'Ninguno'}`],
+          ['Indicación estudio / Apagar luces', `Indicación: ${getVal('tec_indicacion') || '---'} | Apagar luces: ${getVal('tec_apagar_luces') || '--:--'}`],
+          ['Modalidad de estudio', `PSG Basal: ${document.getElementById('tec_psg_basal').checked ? 'SÍ' : 'NO'} (Fecha: ${getVal('tec_fecha_basal') || '--'}, Lugar: ${getVal('tec_realizado_en') || '--'}, Dx: ${getVal('tec_dx_basal') || '--'}) | PSG C-PAP: ${document.getElementById('tec_psg_cpap').checked ? 'SÍ' : 'NO'} (Máscara: ${getVal('tec_tamano_mascara') || '--'})`],
+          ['Noche Partida / Oxígeno', `Noche partida: ${document.getElementById('tec_noche_partida').checked ? 'SÍ' : 'NO'} (IAH: ${getVal('tec_iah') || '--'}, Evento: ${getVal('tec_tipo_evento') || '--'}, 2ª parte: ${getVal('tec_hora_inicio_2parte') || '--'}) | FIO2 21%: ${document.getElementById('tec_fio2_21').checked ? 'SÍ' : 'NO'} | O2: ${getVal('tec_o2_dosis') || '--'} (${getVal('tec_o2_inicio') || '--'} - ${getVal('tec_o2_fin') || '--'})`],
+          ['Signos vitales ANTES', `TA: ${getVal('sv_antes_ta') || '--'} | FC: ${getVal('sv_antes_fc') || '--'} | FR: ${getVal('sv_antes_fr') || '--'} | SatO2 (21%): ${getVal('sv_antes_sat') || '--'}`],
+          ['Signos vitales AL FINALIZAR', `TA: ${getVal('sv_despues_ta') || '--'} | FC: ${getVal('sv_despues_fc') || '--'} | FR: ${getVal('sv_despues_fr') || '--'} | SatO2 (21%): ${getVal('sv_despues_sat') || '--'}`],
+          ['Ronquido / Técnico / Observaciones', `Ronquido: ${getRadio('tec_ronquido')} (${getVal('tec_intensidad') || '--'}) | Realiza estudio: ${getVal('tec_realiza_estudio') || '---'} | Obs: ${getVal('tec_observaciones') || 'Ninguna'}`]
+        ]
+      });
+      y = doc.lastAutoTable.finalY + 6;
+
+      // 8. Cuestionario STOP-BANG
+      tituloSeccion('8. CUESTIONARIO STOP-BANG (TAMIZAJE DE APNEA DEL SUEÑO)');
+      const resStopBang = calcularStopBang();
+      const filasStopBang = preguntasStopBang.map((preg, idx) => [
+        `${idx + 1}`,
+        preg,
+        getRadio(`sb_${idx}`)
+      ]);
+      filasStopBang.push([
+        { content: '', styles: { fillColor: grisFondo } },
+        { content: `PUNTAJE TOTAL STOP-BANG: ${resStopBang.clasif}`, styles: { fontStyle: 'bold', fillColor: grisFondo } },
+        { content: `${resStopBang.total} / 8`, styles: { fontStyle: 'bold', fillColor: grisFondo } }
+      ]);
+
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 7.8, cellPadding: 2, textColor: [15, 23, 42] },
+        headStyles: { fillColor: grisFondo, textColor: [15, 23, 42], fontStyle: 'bold' },
+        head: [['N°', 'Pregunta / Criterio (Bajo riesgo: 0-2 | Intermedio: 3-4 | Alto riesgo: 5-8)', 'Respuesta']],
+        body: filasStopBang
+      });
+      y = doc.lastAutoTable.finalY + 6;
+
+      // 9. Consentimiento Informado para Polisomnograma Nocturno o Estudio de Sueño en Adultos
+      tituloSeccion('9. CONSENTIMIENTO INFORMADO PARA POLISOMNOGRAMA NOCTURNO O ESTUDIO DE SUEÑO EN ADULTOS');
+      const lugaresCI = [];
+      if (document.getElementById('ci_lugar_clinica')?.checked) lugaresCI.push('Las instalaciones de la Clínica');
+      if (document.getElementById('ci_lugar_domicilio')?.checked) lugaresCI.push('En su domicilio');
+
+      const procsSeleccionados = [];
+      for (let i = 1; i <= 9; i++) {
+        const cb = document.getElementById(`ci_proc_${i}`);
+        if (cb && cb.checked) procsSeleccionados.push(cb.value);
+      }
+
+      const textoDescripcionCI = [
+        'Mediante este documento se le brindará información acerca del Procedimiento/Prueba/Tratamiento que ha sido solicitado por su Médico tratante, beneficios, riesgos y otras posibles alternativas (si existen). La información obtenida le permitirá tomar una decisión informada, libre y voluntaria para aceptar la intervención que se realizará.',
+        'Descripción: El Centro de Estudios de Sueño de la Clínica de Especialistas Girardot le realizará esta noche un examen especializado del sueño llamado Polisomnografía (PSG), el cual fue solicitado por su médico tratante. Este examen registra señales fisiológicas como actividad cerebral, respiración, ronquidos, actividad cardíaca, actividad muscular, posiciones al dormir, oxígeno en sangre y movimientos oculares. Usted llenará un cuestionario del sueño y se le realizará una historia clínica para el especialista.'
+      ].join('\n');
+
+      doc.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        styles: { fontSize: 7.8, cellPadding: 2, textColor: [15, 23, 42] },
+        body: [
+          ['Subproceso', `Centro de Estudios de Sueño • Fecha: ${getVal('ci_fecha') || '---'}`],
+          [
+            {
+              content: textoDescripcionCI,
+              colSpan: 2
+            }
+          ],
+          ['Lugar de realización del estudio', lugaresCI.length ? lugaresCI.join(' / ') : 'No especificado'],
+          ['Procedimiento(s) a realizar', procsSeleccionados.length ? procsSeleccionados.join(' • ') : 'Ninguno marcado'],
+          [
+            'Aceptación informada, libre y voluntaria',
+            document.getElementById('ci_acepto_consentimiento')?.checked
+              ? 'SÍ — El paciente declara haber leído, comprendido y aceptado voluntariamente el procedimiento.'
+              : 'NO marcada'
+          ]
+        ]
+      });
+      y = doc.lastAutoTable.finalY + 6;
+
+      // 10. Firma Digital del Paciente / Acudiente
+      if (y > pageHeight - 52) {
+        doc.addPage();
+        y = 14;
+      }
+      tituloSeccion('10. FIRMA DIGITAL DE ACEPTACIÓN Y VERACIDAD DE LA INFORMACIÓN');
+
+      if (hasSigned) {
+        const firmaDataUrl = canvas.toDataURL('image/png');
+        doc.setDrawColor(203, 213, 225);
+        doc.roundedRect(margin, y, 85, 30, 2, 2, 'S');
+        doc.addImage(firmaDataUrl, 'PNG', margin + 2, y + 2, 81, 26);
+      }
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(51, 65, 85);
+      const nombreCompleto = `${getVal('pac_nombres')} ${getVal('pac_apellidos')}`.trim() || 'Paciente';
+      const tipoDocFirma = getVal('pac_tipo_doc') || 'CC';
+      const cc = getVal('pac_cc') || '---';
+      doc.text(`Firmado digitalmente por: ${nombreCompleto}`, margin + 92, y + 8);
+      doc.text(`Documento (${tipoDocFirma}): ${cc}`, margin + 92, y + 14);
+      doc.text(`Fecha y hora de generación: ${new Date().toLocaleString('es-CO')}`, margin + 92, y + 20);
+      doc.text('Clínica de Especialistas Girardot', margin + 92, y + 26);
+
+      return doc;
+    }
+
+    // =========================================================================
+    // 7. GUARDAR CAMBIOS EN LOCALSTORAGE + EXPORTAR Y ENVIAR PDF
+    // =========================================================================
+    const STORAGE_KEY_FORM = 'especialistas_girardot_formulario_guardado_v1';
+
+    function guardarCambiosFormulario(silencioso = false) {
+      try {
+        const datos = {
+          campos: {},
+          radios: {},
+          checkboxes: {},
+          filasMed13: contadorMed13,
+          firmaDataUrl: hasSigned && canvas ? canvas.toDataURL('image/png') : null,
+          fechaGuardado: new Date().toLocaleString('es-CO')
+        };
+
+        document.querySelectorAll('#junical-form input[id], #junical-form select[id], #junical-form textarea[id]').forEach((el) => {
+          if (el.type === 'checkbox') {
+            datos.checkboxes[el.id] = el.checked;
+          } else if (el.type !== 'radio' && el.type !== 'file') {
+            datos.campos[el.id] = el.value;
+          }
+        });
+
+        const nombresRadio = new Set();
+        document.querySelectorAll('#junical-form input[type="radio"][name]').forEach((r) => nombresRadio.add(r.name));
+        nombresRadio.forEach((name) => {
+          const checked = document.querySelector(`#junical-form input[type="radio"][name="${name}"]:checked`);
+          if (checked) datos.radios[name] = checked.value;
+        });
+
+        localStorage.setItem(STORAGE_KEY_FORM, JSON.stringify(datos));
+
+        const indicador = document.getElementById('estado-guardado-texto');
+        if (indicador) {
+          indicador.textContent = `✓ Información guardada correctamente (${datos.fechaGuardado}).`;
+          indicador.classList.remove('hidden');
+        }
+
+        if (!silencioso) {
+          mostrarAviso(
+            'Cambios guardados',
+            'Toda la información registrada en el formulario (incluyendo respuestas, escalas y firma digital) se ha guardado correctamente en este navegador.'
+          );
+        }
+      } catch (e) {
+        if (!silencioso) {
+          mostrarAviso('Error al guardar', `No se pudieron guardar los datos: ${e.message}`);
+        }
+      }
+    }
+
+    function restaurarCambiosGuardados() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_FORM);
+        if (!raw) return;
+        const datos = JSON.parse(raw);
+
+        if (datos.filasMed13 && datos.filasMed13 > contadorMed13) {
+          while (contadorMed13 < datos.filasMed13) {
+            agregarFilaMed13();
+          }
+        }
+
+        if (datos.campos) {
+          Object.entries(datos.campos).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.value = val;
+          });
+        }
+
+        if (datos.checkboxes) {
+          Object.entries(datos.checkboxes).forEach(([id, checked]) => {
+            const el = document.getElementById(id);
+            if (el) el.checked = Boolean(checked);
+          });
+        }
+
+        if (datos.radios) {
+          Object.entries(datos.radios).forEach(([name, val]) => {
+            const radio = document.querySelector(`#junical-form input[type="radio"][name="${name}"][value="${val}"]`);
+            if (radio) {
+              radio.checked = true;
+              if (name === 'p6_despierta') toggleBloque('bloque_p6', val === 'SI');
+              if (name === 'p8_dificultad') toggleBloque('bloque_p8', val === 'SI');
+              if (name === 'p12_med_dormir') toggleBloque('bloque_p12', val === 'SI');
+            }
+          });
+        }
+
+        calcularIMC();
+        calcularEpworth();
+        calcularStopBang();
+
+        if (datos.firmaDataUrl && canvas && ctx) {
+          const img = new Image();
+          img.onload = function () {
+            const rect = canvas.getBoundingClientRect();
+            ctx.drawImage(img, 0, 0, rect.width, rect.height);
+            hasSigned = true;
+            const placeholder = document.getElementById('signature-placeholder');
+            if (placeholder) placeholder.classList.add('hidden');
+          };
+          img.src = datos.firmaDataUrl;
+        }
+
+        const indicador = document.getElementById('estado-guardado-texto');
+        if (indicador && datos.fechaGuardado) {
+          indicador.textContent = `✓ Borrador restaurado (guardado el ${datos.fechaGuardado}).`;
+          indicador.classList.remove('hidden');
+        }
+      } catch (e) {
+        // Ignorar si hay datos corruptos
+      }
+    }
+
+    function actualizarNombreAdjuntoSeleccionado(input) {
+      const infoEl = document.getElementById('modal_adjunto_confirmado');
+      if (!infoEl) return;
+      if (input.files && input.files[0]) {
+        infoEl.textContent = `✓ Archivo seleccionado para adjuntar: ${input.files[0].name}`;
+        infoEl.classList.remove('hidden');
+      } else {
+        infoEl.classList.add('hidden');
+      }
+    }
+
+    let ultimoDocPDF = null;
+    let ultimoBlobPDF = null;
+    let ultimoNombreArchivoPDF = 'Formulario_Especialistas_Girardot.pdf';
+
+    function cerrarModalEnvioCorreo() {
+      const modal = document.getElementById('modal-envio-correo');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function descargarNuevamentePDF() {
+      if (ultimoDocPDF) {
+        ultimoDocPDF.save(ultimoNombreArchivoPDF);
+      }
+    }
+
+    async function compartirPDFConAdjunto() {
+      if (!ultimoBlobPDF) return;
+      const correoDestino = getVal('modal_correo_para');
+      const asunto = getVal('modal_correo_asunto');
+      const mensaje = getVal('modal_correo_mensaje');
+
+      const archivoInput = document.getElementById('modal_input_adjunto')?.files?.[0];
+      const fileToShare = archivoInput || new File([ultimoBlobPDF], ultimoNombreArchivoPDF, { type: 'application/pdf' });
+
+      if (navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
+        try {
+          await navigator.share({
+            title: asunto,
+            text: correoDestino ? `Para: ${correoDestino}\n\n${mensaje}` : mensaje,
+            files: [fileToShare]
+          });
+        } catch (e) {
+          // Usuario canceló el diálogo de compartir
+        }
+      }
+    }
+
+    function leerArchivoComoDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function abrirGmailDesdeModal() {
+      const correoDestino = getVal('modal_correo_para');
+      if (!correoDestino || !correoDestino.includes('@')) {
+        mostrarAviso('Correo electrónico requerido', 'Por favor digite un <strong>correo electrónico destinatario</strong> válido antes de enviar.');
+        document.getElementById('modal_correo_para').focus();
+        return;
+      }
+
+      const asuntoTexto = getVal('modal_correo_asunto');
+      const mensajeTexto = getVal('modal_correo_mensaje');
+      const archivoAdjuntoInput = document.getElementById('modal_input_adjunto')?.files?.[0];
+
+      const pubKey = localStorage.getItem('especialistas_girardot_ejs_pub');
+      const srvId = localStorage.getItem('especialistas_girardot_ejs_srv');
+      const tplId = localStorage.getItem('especialistas_girardot_ejs_tpl');
+
+      if (pubKey && srvId && tplId && window.emailjs && (archivoAdjuntoInput || ultimoDocPDF)) {
+        const btnEnviarModal = document.getElementById('btn-modal-enviar-correo');
+        const textoOrigModal = btnEnviarModal.innerHTML;
+        btnEnviarModal.disabled = true;
+        btnEnviarModal.innerHTML = '<span>Enviando correo...</span>';
+        try {
+          const pdfBase64 = archivoAdjuntoInput
+            ? await leerArchivoComoDataURL(archivoAdjuntoInput)
+            : ultimoDocPDF.output('datauristring');
+          emailjs.init(pubKey);
+          await emailjs.send(srvId, tplId, {
+            to_email: correoDestino,
+            subject: asuntoTexto,
+            message: mensajeTexto,
+            paciente_nombre: `${getVal('pac_nombres')} ${getVal('pac_apellidos')}`.trim(),
+            paciente_cc: getVal('pac_cc') || 'SinDoc',
+            fecha_examen: getVal('pac_fecha_examen'),
+            epworth_total: `${calcularEpworth()} / 24`,
+            pdf_attachment: pdfBase64
+          });
+          cerrarModalEnvioCorreo();
+          mostrarAviso(
+            '¡Correo enviado con éxito!',
+            `El formulario resuelto en PDF (<strong>${archivoAdjuntoInput ? archivoAdjuntoInput.name : ultimoNombreArchivoPDF}</strong>) fue enviado a <strong>${correoDestino}</strong>.`
+          );
+          return;
+        } catch (err) {
+          // Si falla EmailJS, continúa abriendo Gmail con el destinatario digitado
+        } finally {
+          btnEnviarModal.disabled = false;
+          btnEnviarModal.innerHTML = textoOrigModal;
+        }
+      }
+
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(correoDestino)}&su=${encodeURIComponent(asuntoTexto)}&body=${encodeURIComponent(mensajeTexto)}`;
+      window.open(gmailUrl, '_blank');
+      cerrarModalEnvioCorreo();
+    }
+
+    async function procesarEnvioFormulario() {
+      const nombres = getVal('pac_nombres');
+      const apellidos = getVal('pac_apellidos');
+      const aceptoCI = document.getElementById('ci_acepto_consentimiento')?.checked;
+
+      if (!aceptoCI) {
+        mostrarAviso(
+          'Consentimiento Informado pendiente',
+          'Por favor marque la casilla de aceptación en la <strong>Sección 7 (Consentimiento Informado)</strong> antes de exportar y enviar.'
+        );
+        document.getElementById('sec-consentimiento').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      if (!nombres && !apellidos) {
+        mostrarAviso(
+          'Datos del paciente requeridos',
+          'Por favor ingrese el <strong>Nombre</strong> o los <strong>Apellidos</strong> del paciente en la Sección 1 antes de exportar.'
+        );
+        document.getElementById('pac_nombres').focus();
+        return;
+      }
+
+      if (!hasSigned) {
+        mostrarAviso(
+          'Firma digital requerida',
+          'Por favor dibuje su <strong>firma digital</strong> en el recuadro de la Sección 8 antes de presionar <strong>EXPORTAR Y ENVIAR</strong>.'
+        );
+        document.getElementById('sec-firma').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      guardarCambiosFormulario(true);
+
+      const btn = document.getElementById('btn-exportar-enviar');
+      const textoOriginal = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span>Exportando PDF...</span>';
+
+      try {
+        const logoDataUrl = await obtenerLogoDataURL();
+        const doc = construirDocumentoPDF(logoDataUrl);
+
+        const nombreCompleto = `${nombres} ${apellidos}`.trim();
+        const tipoDoc = getVal('pac_tipo_doc') || 'CC';
+        const ccPaciente = getVal('pac_cc') || 'SinDoc';
+        const nombreArchivo = `Formulario_Especialistas_Girardot_${nombreCompleto.replace(/\s+/g, '_')}_${tipoDoc}_${ccPaciente}.pdf`;
+
+        ultimoDocPDF = doc;
+        ultimoNombreArchivoPDF = nombreArchivo;
+        ultimoBlobPDF = doc.output('blob');
+
+        // Descargar en segundo plano el PDF generado
+        doc.save(nombreArchivo);
+
+        // Preparar la ventana emergente funcional para digitar el correo y adjuntar el PDF
+        const inputCorreo = document.getElementById('modal_correo_para');
+        inputCorreo.value = '';
+        document.getElementById('modal_input_adjunto').value = '';
+        document.getElementById('modal_adjunto_confirmado').classList.add('hidden');
+
+        document.getElementById('modal_correo_asunto').value = `Consentimiento y Cuestionario Polisomnografía - ${nombreCompleto} (${tipoDoc} ${ccPaciente})`;
+        document.getElementById('modal_correo_mensaje').value =
+          `Cordial saludo,\n\n` +
+          `Adjunto el PDF resuelto y firmado digitalmente del Consentimiento Informado y Cuestionario de Polisomnografía (Clínica de Especialistas Girardot):\n` +
+          `• Paciente: ${nombreCompleto} (${tipoDoc} ${ccPaciente})\n` +
+          `• Fecha: ${getVal('pac_fecha_examen') || 'Hoy'} | Epworth: ${calcularEpworth()}/24 pts\n` +
+          `• Archivo: ${nombreArchivo}`;
+
+        document.getElementById('modal_pdf_nombre').textContent = nombreArchivo;
+        const pesoKB = Math.max(1, Math.round(ultimoBlobPDF.size / 1024));
+        document.getElementById('modal_pdf_peso').textContent = `✓ PDF descargado (${pesoKB} KB) listo para adjuntar`;
+
+        const testFile = new File([ultimoBlobPDF], nombreArchivo, { type: 'application/pdf' });
+        const btnCompartir = document.getElementById('btn-compartir-nativo');
+        if (navigator.canShare && navigator.canShare({ files: [testFile] })) {
+          btnCompartir.classList.remove('hidden');
+          btnCompartir.classList.add('flex');
+        } else {
+          btnCompartir.classList.add('hidden');
+          btnCompartir.classList.remove('flex');
+        }
+
+        const modalEnvio = document.getElementById('modal-envio-correo');
+        modalEnvio.classList.remove('hidden');
+        modalEnvio.classList.add('flex');
+        setTimeout(() => inputCorreo.focus(), 100);
+      } catch (err) {
+        mostrarAviso('Error al generar el PDF', `Ocurrió un inconveniente: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+      }
+    }
+  </script>
+</body>
+</html>
