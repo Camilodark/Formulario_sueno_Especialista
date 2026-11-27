@@ -1002,9 +1002,18 @@
       <section id="sec-firma" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="bg-[#073673] text-white px-5 py-3 flex flex-wrap items-center justify-between gap-2">
           <h2 class="text-sm font-bold uppercase tracking-wider">8. Firma Digital y Envío Automático</h2>
-          <span class="text-[11px] bg-white/15 text-sky-100 px-2.5 py-0.5 rounded-full">
-            Envío directo a: yonatansanchez704@gmail.com
-          </span>
+          <div class="flex flex-col items-start sm:items-end gap-1.5">
+            <span class="text-[11px] bg-white/15 text-sky-100 px-2.5 py-0.5 rounded-full">
+              Envío directo a: yonatansanchez704@gmail.com
+            </span>
+            <div class="flex items-center gap-2">
+              <label for="responsable_estudio" class="text-[11px] font-semibold text-sky-100 whitespace-nowrap">
+                Responsable del estudio:
+              </label>
+              <input type="text" id="responsable_estudio" placeholder="Nombre del responsable"
+                class="rounded-lg bg-white text-slate-900 placeholder-slate-400 px-2.5 py-1 text-xs font-medium outline-none focus:ring-2 focus:ring-sky-300 w-48 sm:w-56" />
+            </div>
+          </div>
         </div>
 
         <div class="p-5 space-y-4">
@@ -1348,7 +1357,7 @@
         const rect = canvas.getBoundingClientRect();
         const width = rect.width || canvas.offsetWidth || 600;
         const height = rect.height || canvas.offsetHeight || 176;
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
         canvas.width = width * dpr;
         canvas.height = height * dpr;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1457,8 +1466,8 @@
           const img = new Image();
           img.onload = function () {
             const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = 640;
-            tempCanvas.height = 580;
+            tempCanvas.width = 480;
+            tempCanvas.height = 435;
             const tCtx = tempCanvas.getContext('2d');
             tCtx.fillStyle = '#FFFFFF';
             tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
@@ -1478,11 +1487,11 @@
     }
 
     // =========================================================================
-    // 6. GENERACIÓN PROFESIONAL DE PDF CON jsPDF + AutoTable
+    // 6. GENERACIÓN PROFESIONAL DE PDF CON jsPDF + AutoTable (ALTA NITIDEZ)
     // =========================================================================
     function construirDocumentoPDF(logoDataUrl) {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter', compress: true });
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
       const margin = 14;
@@ -1503,7 +1512,7 @@
           const logoBoxH = 20;
           doc.setFillColor(255, 255, 255);
           doc.roundedRect(margin + 2.5, y + 2.5, logoBoxW, logoBoxH, 1.5, 1.5, 'F');
-          doc.addImage(logoDataUrl, 'PNG', margin + 3, y + 3, logoBoxW - 1, logoBoxH - 1);
+          doc.addImage(logoDataUrl, 'PNG', margin + 3, y + 3, logoBoxW - 1, logoBoxH - 1, undefined, 'FAST');
           textStartX = margin + logoBoxW + 6;
         }
 
@@ -1779,7 +1788,7 @@
         const firmaDataUrl = canvas.toDataURL('image/png');
         doc.setDrawColor(203, 213, 225);
         doc.roundedRect(margin, y, 85, 30, 2, 2, 'S');
-        doc.addImage(firmaDataUrl, 'PNG', margin + 2, y + 2, 81, 26);
+        doc.addImage(firmaDataUrl, 'PNG', margin + 2, y + 2, 81, 26, undefined, 'FAST');
       }
 
       doc.setFont('helvetica', 'normal');
@@ -1915,6 +1924,71 @@
     // =========================================================================
     // 8. EXPORTAR PDF Y ENVIARLO AUTOMÁTICAMENTE AL CORREO ESPECÍFICO
     // =========================================================================
+    // 8. ENVÍO NATIVO COMPATIBLE CON IPHONE / SAFARI (SIN BLOQUEO CORS)
+    // =========================================================================
+    function enviarArchivoPorIframeNativo(urlDestino, camposTexto, archivoPDF, nombreArchivo) {
+      return new Promise((resolve, reject) => {
+        try {
+          const iframeName = 'formsubmit_iframe_' + Date.now();
+          const iframe = document.createElement('iframe');
+          iframe.name = iframeName;
+          iframe.style.display = 'none';
+          document.body.appendChild(iframe);
+
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = urlDestino;
+          form.enctype = 'multipart/form-data';
+          form.target = iframeName;
+          form.style.display = 'none';
+
+          Object.entries(camposTexto).forEach(([key, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+          });
+
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.name = 'attachment';
+          const dt = new DataTransfer();
+          dt.items.add(archivoPDF);
+          fileInput.files = dt.files;
+          form.appendChild(fileInput);
+
+          document.body.appendChild(form);
+
+          let finalizado = false;
+          const limpiarElementos = () => {
+            setTimeout(() => {
+              if (form.parentNode) form.parentNode.removeChild(form);
+              if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            }, 1500);
+          };
+
+          iframe.onload = () => {
+            if (finalizado) return;
+            finalizado = true;
+            limpiarElementos();
+            resolve(true);
+          };
+
+          setTimeout(() => {
+            if (finalizado) return;
+            finalizado = true;
+            limpiarElementos();
+            resolve(true);
+          }, 9000);
+
+          form.submit();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+
     async function procesarEnvioFormulario() {
       const nombres = getVal('pac_nombres');
       const apellidos = getVal('pac_apellidos');
@@ -1961,50 +2035,60 @@
         const nombreCompleto = `${nombres} ${apellidos}`.trim();
         const tipoDoc = getVal('pac_tipo_doc') || 'CC';
         const ccPaciente = getVal('pac_cc') || 'SinDoc';
+        const responsableEstudio = getVal('responsable_estudio') || getVal('tec_realiza_estudio') || 'No especificado';
         const nombreArchivo = `Formulario_Especialistas_Girardot_${nombreCompleto.replace(/\s+/g, '_')}_${tipoDoc}_${ccPaciente}.pdf`;
 
-        // 1. Guardar / descargar automáticamente el PDF en el equipo
-        doc.save(nombreArchivo);
-
-        // 2. Construir un objeto File real para que FormSubmit adjunte el PDF
+        // 1. Construir el objeto File real de alta nitidez y peso optimizado
         const pdfBlob = doc.output('blob');
         const pdfFile = new File([pdfBlob], nombreArchivo, { type: 'application/pdf' });
         const resStopBang = calcularStopBang();
         const totalEpworth = calcularEpworth();
 
-        const formData = new FormData();
-        formData.append("_subject", `Consentimiento y Cuestionario Polisomnografía (Especialistas Girardot) - ${nombreCompleto} (${tipoDoc} ${ccPaciente})`);
-        formData.append("_captcha", "false");
-        formData.append("_template", "table");
-        formData.append("Sede", "Clínica de Especialistas Girardot");
-        formData.append("Paciente", `${nombreCompleto} (${tipoDoc} ${ccPaciente})`);
-        formData.append("Telefono", getVal('pac_telefono') || 'No registrado');
-        formData.append("EPS_Empresa", getVal('pac_empresa') || 'No registrada');
-        formData.append("Fecha_Examen", getVal('pac_fecha_examen') || 'Hoy');
-        formData.append("Puntaje_Epworth", `${totalEpworth} / 24 puntos`);
-        formData.append("Puntaje_STOP_BANG", `${resStopBang.total} / 8 (${resStopBang.clasif})`);
-        formData.append("attachment", pdfFile, nombreArchivo);
+        const camposEnvio = {
+          _subject: `Cuestionario de Polisomnografía - De ${responsableEstudio} - Paciente: ${nombreCompleto} (${tipoDoc} ${ccPaciente})`,
+          _captcha: 'false',
+          _template: 'table',
+          Sede: 'Clínica de Especialistas Girardot',
+          Responsable_Estudio: responsableEstudio,
+          Paciente: `${nombreCompleto} (${tipoDoc} ${ccPaciente})`,
+          Telefono: getVal('pac_telefono') || 'No registrado',
+          EPS_Empresa: getVal('pac_empresa') || 'No registrada',
+          Fecha_Examen: getVal('pac_fecha_examen') || 'Hoy',
+          Puntaje_Epworth: `${totalEpworth} / 24 puntos`,
+          Puntaje_STOP_BANG: `${resStopBang.total} / 8 (${resStopBang.clasif})`
+        };
 
-        // Endpoint estándar (sin /ajax/) para procesar el archivo PDF adjunto
-        const response = await fetch(`https://formsubmit.co/${CORREO_DESTINO_ESPECIFICO}`, {
-          method: "POST",
-          body: formData
-        });
+        // 2. PRIMERO enviar el PDF adjunto al correo (antes de disparar descarga en Safari iOS)
+        await enviarArchivoPorIframeNativo(
+          `https://formsubmit.co/${CORREO_DESTINO_ESPECIFICO}`,
+          camposEnvio,
+          pdfFile,
+          nombreArchivo
+        );
 
-        if (response.ok) {
-          // 3. Limpiar borrador guardado en localStorage para que al recargar quede en blanco
-          localStorage.removeItem(STORAGE_KEY_FORM);
+        // 3. LUEGO forzar descarga como archivo (sin abrir visor que saque de la página)
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        const linkDescarga = document.createElement('a');
+        linkDescarga.href = blobUrl;
+        linkDescarga.download = nombreArchivo;
+        linkDescarga.style.display = 'none';
+        document.body.appendChild(linkDescarga);
+        linkDescarga.click();
+        setTimeout(() => {
+          document.body.removeChild(linkDescarga);
+          URL.revokeObjectURL(blobUrl);
+        }, 2500);
 
-          mostrarAviso(
-            '¡Exportado y enviado con éxito!',
-            `1. Se descargó el archivo <strong>${nombreArchivo}</strong> en este equipo.<br><br>` +
-            `2. El mismo documento PDF se envió adjunto al correo <strong>${CORREO_DESTINO_ESPECIFICO}</strong>.<br><br>` +
-            `<span class="text-xs text-slate-500">Al presionar <strong>Entendido</strong>, la página se actualizará y quedará limpia para registrar un nuevo paciente.</span>`,
-            true
-          );
-        } else {
-          throw new Error(`El servidor respondió con estado ${response.status}.`);
-        }
+        // 4. Limpiar borrador guardado en localStorage para que al recargar quede en blanco
+        localStorage.removeItem(STORAGE_KEY_FORM);
+
+        mostrarAviso(
+          '¡Exportado y enviado con éxito!',
+          `1. Se descargó el archivo <strong>${nombreArchivo}</strong> en este dispositivo con alta nitidez.<br><br>` +
+          `2. El mismo documento PDF se envió adjunto al correo <strong>${CORREO_DESTINO_ESPECIFICO}</strong>.<br><br>` +
+          `<span class="text-xs text-slate-500">Al presionar <strong>Entendido</strong>, la página se actualizará y quedará limpia para registrar un nuevo paciente.</span>`,
+          true
+        );
       } catch (err) {
         mostrarAviso(
           'PDF descargado, pero hubo un error en el envío',
