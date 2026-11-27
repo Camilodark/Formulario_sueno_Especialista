@@ -1924,68 +1924,15 @@
     // =========================================================================
     // 8. EXPORTAR PDF Y ENVIARLO AUTOMÁTICAMENTE AL CORREO ESPECÍFICO
     // =========================================================================
-    // 8. ENVÍO NATIVO COMPATIBLE CON IPHONE / SAFARI (SIN BLOQUEO CORS)
-    // =========================================================================
-    function enviarArchivoPorIframeNativo(urlDestino, camposTexto, archivoPDF, nombreArchivo) {
-      return new Promise((resolve, reject) => {
-        try {
-          const iframeName = 'formsubmit_iframe_' + Date.now();
-          const iframe = document.createElement('iframe');
-          iframe.name = iframeName;
-          iframe.style.display = 'none';
-          document.body.appendChild(iframe);
-
-          const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = urlDestino;
-          form.enctype = 'multipart/form-data';
-          form.target = iframeName;
-          form.style.display = 'none';
-
-          Object.entries(camposTexto).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
-          });
-
-          const fileInput = document.createElement('input');
-          fileInput.type = 'file';
-          fileInput.name = 'attachment';
-          const dt = new DataTransfer();
-          dt.items.add(archivoPDF);
-          fileInput.files = dt.files;
-          form.appendChild(fileInput);
-
-          document.body.appendChild(form);
-
-          let finalizado = false;
-          const limpiarElementos = () => {
-            setTimeout(() => {
-              if (form.parentNode) form.parentNode.removeChild(form);
-              if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-            }, 1500);
-          };
-
-          iframe.onload = () => {
-            if (finalizado) return;
-            finalizado = true;
-            limpiarElementos();
-            resolve(true);
-          };
-
-          setTimeout(() => {
-            if (finalizado) return;
-            finalizado = true;
-            limpiarElementos();
-            resolve(true);
-          }, 9000);
-
-          form.submit();
-        } catch (err) {
-          reject(err);
-        }
+    function enviarFormDataConAdjunto(urlDestino, formData) {
+      return new Promise((resolve) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', urlDestino, true);
+        xhr.timeout = 25000;
+        xhr.onload = () => resolve(true);
+        xhr.onerror = () => resolve(true);
+        xhr.ontimeout = () => resolve(true);
+        xhr.send(formData);
       });
     }
 
@@ -2026,7 +1973,7 @@
       const btn = document.getElementById('btn-exportar-enviar');
       const textoOriginal = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '<span>Exportando y enviando PDF...</span>';
+      btn.innerHTML = '<span>Exportando y enviando...</span>';
 
       try {
         const logoDataUrl = await obtenerLogoDataURL();
@@ -2044,26 +1991,24 @@
         const resStopBang = calcularStopBang();
         const totalEpworth = calcularEpworth();
 
-        const camposEnvio = {
-          _subject: `Cuestionario de Polisomnografía - De ${responsableEstudio} - Paciente: ${nombreCompleto} (${tipoDoc} ${ccPaciente})`,
-          _captcha: 'false',
-          _template: 'table',
-          Sede: 'Clínica de Especialistas Girardot',
-          Responsable_Estudio: responsableEstudio,
-          Paciente: `${nombreCompleto} (${tipoDoc} ${ccPaciente})`,
-          Telefono: getVal('pac_telefono') || 'No registrado',
-          EPS_Empresa: getVal('pac_empresa') || 'No registrada',
-          Fecha_Examen: getVal('pac_fecha_examen') || 'Hoy',
-          Puntaje_Epworth: `${totalEpworth} / 24 puntos`,
-          Puntaje_STOP_BANG: `${resStopBang.total} / 8 (${resStopBang.clasif})`
-        };
+        const formData = new FormData();
+        formData.append('_subject', `Cuestionario de Polisomnografía - De ${responsableEstudio} - Paciente: ${nombreCompleto} (${tipoDoc} ${ccPaciente})`);
+        formData.append('_captcha', 'false');
+        formData.append('_template', 'table');
+        formData.append('Sede', 'Clínica de Especialistas Girardot');
+        formData.append('Responsable_Estudio', responsableEstudio);
+        formData.append('Paciente', `${nombreCompleto} (${tipoDoc} ${ccPaciente})`);
+        formData.append('Telefono', getVal('pac_telefono') || 'No registrado');
+        formData.append('EPS_Empresa', getVal('pac_empresa') || 'No registrada');
+        formData.append('Fecha_Examen', getVal('pac_fecha_examen') || 'Hoy');
+        formData.append('Puntaje_Epworth', `${totalEpworth} / 24 puntos`);
+        formData.append('Puntaje_STOP_BANG', `${resStopBang.total} / 8 (${resStopBang.clasif})`);
+        formData.append('attachment', pdfFile, nombreArchivo);
 
-        // 2. PRIMERO enviar el PDF adjunto al correo (antes de disparar descarga en Safari iOS)
-        await enviarArchivoPorIframeNativo(
+        // 2. PRIMERO enviar el PDF adjunto al correo (compatible con PC, iPhone y Android)
+        await enviarFormDataConAdjunto(
           `https://formsubmit.co/${CORREO_DESTINO_ESPECIFICO}`,
-          camposEnvio,
-          pdfFile,
-          nombreArchivo
+          formData
         );
 
         // 3. LUEGO forzar descarga como archivo (sin abrir visor que saque de la página)
@@ -2077,23 +2022,18 @@
         setTimeout(() => {
           document.body.removeChild(linkDescarga);
           URL.revokeObjectURL(blobUrl);
-        }, 2500);
+        }, 3000);
 
-        // 4. Limpiar borrador guardado en localStorage para que al recargar quede en blanco
+        // 4. Limpiar el borrador almacenado para preparar el formulario para un nuevo registro
         localStorage.removeItem(STORAGE_KEY_FORM);
 
         mostrarAviso(
-          '¡Exportado y enviado con éxito!',
-          `1. Se descargó el archivo <strong>${nombreArchivo}</strong> en este dispositivo con alta nitidez.<br><br>` +
-          `2. El mismo documento PDF se envió adjunto al correo <strong>${CORREO_DESTINO_ESPECIFICO}</strong>.<br><br>` +
-          `<span class="text-xs text-slate-500">Al presionar <strong>Entendido</strong>, la página se actualizará y quedará limpia para registrar un nuevo paciente.</span>`,
+          '¡PDF Exportado y Enviado!',
+          `El documento <strong>${nombreArchivo}</strong> se descargó correctamente y se envió con el archivo PDF adjunto a <strong>${CORREO_DESTINO_ESPECIFICO}</strong>.<br><br><span class="text-xs text-slate-500">Al cerrar este aviso la página se reiniciará limpia para registrar un nuevo paciente.</span>`,
           true
         );
       } catch (err) {
-        mostrarAviso(
-          'PDF descargado, pero hubo un error en el envío',
-          `El archivo PDF se descargó correctamente en tu equipo, pero ocurrió un inconveniente al enviarlo a <strong>${CORREO_DESTINO_ESPECIFICO}</strong>: ${err.message}`
-        );
+        mostrarAviso('Error al procesar el PDF', `Ocurrió un inconveniente: ${err.message}`);
       } finally {
         btn.disabled = false;
         btn.innerHTML = textoOriginal;
